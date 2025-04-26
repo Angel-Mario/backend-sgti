@@ -1,12 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { In, Repository } from 'typeorm'
-import { UpdateOmnibusDto } from './dtos/update-omnibus.dto'
+import { isUUID } from 'class-validator'
 import handleDBErrors from 'src/common/handlers/handleDBErrors'
+import { Chofer } from 'src/personal/chofer/entities/chofer.entity'
+import { In, Repository } from 'typeorm'
 import { CreateOmnibusDto } from './dtos/create-omnibus.dto'
 import { PaginationOmnibusDto } from './dtos/pagination-omnibus.dto'
+import { UpdateOmnibusDto } from './dtos/update-omnibus.dto'
 import { Omnibus } from './entities/omnibus.entity'
-import { isUUID } from 'class-validator'
 
 @Injectable()
 export class OmnibusService {
@@ -27,6 +28,13 @@ export class OmnibusService {
 
     const query = this.omnibusRepository
       .createQueryBuilder('omnibus')
+      .leftJoinAndMapOne(
+        'omnibus.chofer', // Nueva propiedad en el objeto Omnibus
+        Chofer, // La entidad que queremos unir (Chofer)
+        'chofer', // Alias para la entidad Chofer en la consulta
+        'chofer.omnibusId = omnibus.id', // Condición de join
+      )
+      .select(['omnibus', 'chofer.id'])
       .skip((page - 1) * pageSize)
       .take(pageSize)
       .orderBy(

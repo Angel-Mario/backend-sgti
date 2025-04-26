@@ -10,7 +10,6 @@ import responseNotFoundMaker from 'src/common/functions/responseNotFoundMaker'
 import handleDBErrors from 'src/common/handlers/handleDBErrors'
 import { CreateAdminDto } from './dtos/create-admin.dto'
 import { UpdateAdminDto } from './dtos/update-admin.dto'
-import { SeedAdministrador } from 'src/seed/data/constants'
 
 @Injectable()
 export class AdministradorService {

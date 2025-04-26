@@ -1,16 +1,16 @@
-import { OmnibusService } from './../../transportacion/omnibus/omnibus.service'
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { User } from 'src/auth/entities/user.entity'
-import { DataSource, Repository } from 'typeorm'
-import { Chofer } from './entities/chofer.entity'
-import { PaginationChoferDto } from './dtos/pagination-chofer.dto'
-import { CreateChoferDto } from './dtos/create-chofer.dto'
-import { UpdateChoferDto } from './dtos/update-chofer.dto'
 import * as bcrypt from 'bcrypt'
+import { User } from 'src/auth/entities/user.entity'
 import responseNotFoundMaker from 'src/common/functions/responseNotFoundMaker'
 import handleDBErrors from 'src/common/handlers/handleDBErrors'
 import { RutaService } from 'src/geografico/ruta/ruta.service'
+import { DataSource, Repository } from 'typeorm'
+import { OmnibusService } from './../../transportacion/omnibus/omnibus.service'
+import { CreateChoferDto } from './dtos/create-chofer.dto'
+import { PaginationChoferDto } from './dtos/pagination-chofer.dto'
+import { UpdateChoferDto } from './dtos/update-chofer.dto'
+import { Chofer } from './entities/chofer.entity'
 
 @Injectable()
 export class ChoferService {
@@ -24,7 +24,70 @@ export class ChoferService {
     private readonly rutaService: RutaService,
   ) {}
   async findAll(paginationDto: PaginationChoferDto) {
-    return await this.choferRepository.find()
+    const {
+      page = 1,
+      pageSize = +process.env.DEFAULT_PAGE_SIZE,
+      order = process.env.DEFAULT_ORDER,
+      sorting = 'nombre_u',
+      search = '',
+      column = '',
+    } = paginationDto
+
+    console.log(sorting)
+
+    let query = this.choferRepository
+      .createQueryBuilder('chofer')
+      .leftJoinAndSelect('chofer.user', 'user')
+      .leftJoinAndSelect(
+        'chofer.omnibus',
+        'chofer.omnibus',
+        'chofer.omnibus IS NOT NULL',
+      )
+      .leftJoinAndSelect(
+        'chofer.ruta',
+        'chofer.ruta',
+        'chofer.ruta IS NOT NULL',
+      )
+      .skip(pageSize * (page - 1))
+      .take(pageSize || pageSize)
+      .orderBy(
+        `user.${sorting || 'id'}`,
+        `${order.toLocaleLowerCase() === 'asc' ? 'ASC' : 'DESC'}`,
+      )
+    if (column === 'isActive' && search.toLocaleLowerCase() === 'inactivo') {
+      query = query.where(`user.${column} = :search`, {
+        search: false,
+      })
+    } else if (
+      column === 'isActive' &&
+      search.toLocaleLowerCase() === 'activo'
+    ) {
+      query = query.where(`user.${column} = :search`, {
+        search: true,
+      })
+    } else if (search !== '' && column !== '') {
+      query = query.where(`CAST(user.${column} AS TEXT) ILIKE(:search)`, {
+        search: `%${search}%`,
+      })
+    }
+
+    const data = await query.getManyAndCount()
+
+    return {
+      data: data[0].map((chofer) => {
+        const { id: _id, residencia, user, omnibus, ruta } = chofer
+        const { id, roles: _roles, ...rest } = user
+        return {
+          id: id,
+          omnibus,
+          ruta,
+          residencia,
+          ...rest,
+        }
+      }),
+      count: data[1],
+      pages: Math.ceil(data[1] / pageSize),
+    }
   }
 
   async findOne(id: string) {
