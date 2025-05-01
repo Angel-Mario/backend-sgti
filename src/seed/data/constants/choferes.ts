@@ -6,8 +6,8 @@ export interface SeedChofer {
   telefono?: string
   carnet: number
   residencia?: string
-  omnibusChapa: string
-  rutaNombre: string
+  vehiculoMatricula?: string
+  rutaNombre?: string
 }
 
 export const choferes: SeedChofer[] = [
@@ -18,7 +18,7 @@ export const choferes: SeedChofer[] = [
     correo: 'juan@gmail.com',
     carnet: 10000000021,
     residencia: '1',
-    omnibusChapa: 'ABC123',
+    vehiculoMatricula: 'ABC123',
     rutaNombre: 'Ruta 1',
   },
   {
@@ -28,7 +28,7 @@ export const choferes: SeedChofer[] = [
     correo: 'pedro@gmail.com',
     carnet: 10000000031,
     residencia: '2',
-    omnibusChapa: 'DEF456',
+    vehiculoMatricula: 'DEF456',
     rutaNombre: 'Ruta 2',
   },
   {
@@ -38,7 +38,7 @@ export const choferes: SeedChofer[] = [
     correo: 'carlos@gmail.com',
     carnet: 10000000032,
     residencia: '3',
-    omnibusChapa: 'GHI789',
+    vehiculoMatricula: 'GHI789',
     rutaNombre: 'Ruta 2',
   },
 ]

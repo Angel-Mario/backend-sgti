@@ -31,7 +31,7 @@ import { TransportacionModule } from './transportacion/transportacion.module'
     GeoModule,
     GestionModule,
     SeedModule,
-    // MbtilesModule,
+    MbtilesModule,
   ],
   controllers: [],
   providers: [],

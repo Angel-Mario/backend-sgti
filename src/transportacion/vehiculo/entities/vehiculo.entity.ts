@@ -1,12 +1,12 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
 
-@Entity('omnibus')
-export class Omnibus {
+@Entity('vehiculo')
+export class Vehiculo {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
   @Column('text', { nullable: false, unique: true })
-  chapa: string
+  matricula: string
 
   @Column('numeric')
   consumo: number

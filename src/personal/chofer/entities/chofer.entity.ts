@@ -1,6 +1,6 @@
 import { User } from 'src/auth/entities/user.entity'
 import { Ruta } from 'src/geografico/ruta/entities/ruta.entity'
-import { Omnibus } from 'src/transportacion/omnibus/entities/omnibus.entity'
+import { Vehiculo } from 'src/transportacion/vehiculo/entities/vehiculo.entity'
 import {
   Column,
   Entity,
@@ -31,12 +31,12 @@ export class Chofer {
   user: User
 
   @OneToOne(
-    () => Omnibus,
-    (omnibus) => omnibus.id,
+    () => Vehiculo,
+    (vehiculo) => vehiculo.id,
     { eager: true },
   )
   @JoinColumn()
-  omnibus?: Omnibus
+  vehiculo?: Vehiculo
 
   @ManyToOne(() => Ruta, { eager: true })
   @JoinColumn()

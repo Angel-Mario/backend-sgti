@@ -5,14 +5,14 @@ import { ChoferService } from './chofer.service'
 import { Module } from '@nestjs/common'
 import { Chofer } from './entities/chofer.entity'
 import { User } from 'src/auth/entities/user.entity'
-import { OmnibusModule } from 'src/transportacion/omnibus/omnibus.module'
+import { VehiculoModule } from 'src/transportacion/vehiculo/vehiculo.module'
 import { RutaModule } from 'src/geografico/ruta/ruta.module'
 
 @Module({
   controllers: [ChoferController],
   imports: [
     TypeOrmModule.forFeature([Chofer, User]),
-    OmnibusModule,
+    VehiculoModule,
     RutaModule,
   ],
   providers: [ChoferService],

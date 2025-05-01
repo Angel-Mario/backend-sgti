@@ -3,15 +3,14 @@ import { IsEnum, IsOptional, Min } from 'class-validator'
 
 const COLUMNS_NAME = [
   'id',
-  'chapa',
-  'consumo',
-  'capacidad',
-  'marca',
-  'modelo',
-  'año',
+  'complejidad',
+  'descripcion',
+  'tipo',
+  'piezas_necesarias',
+  'vehiculo.matricula',
 ]
 
-export class PaginationOmnibusDto {
+export class PaginationAveriaDto {
   @IsOptional()
   @IsEnum(['asc', 'desc'], { message: 'Order must be asc or desc' })
   order?: string

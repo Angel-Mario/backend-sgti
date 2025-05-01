@@ -6,12 +6,12 @@ import { PuntoRefService } from 'src/geografico/punto-ref/punto-ref.service'
 import { Ruta } from 'src/geografico/ruta/entities/ruta.entity'
 import { RutaService } from 'src/geografico/ruta/ruta.service'
 import { ChoferService } from 'src/personal/chofer/chofer.service'
-import { Omnibus } from 'src/transportacion/omnibus/entities/omnibus.entity'
+import { Vehiculo } from 'src/transportacion/vehiculo/entities/vehiculo.entity'
 import { Repository } from 'typeorm'
-import { OmnibusService } from '../transportacion/omnibus/omnibus.service'
+import { VehiculoService } from '../transportacion/vehiculo/vehiculo.service'
 import { AdministradorService } from './../personal/administrador/administrador.service'
 import { UsuarioService } from './../personal/usuario/usuario.service'
-import { administradores } from './data/constants/administradores'
+// import { administradores } from './data/constants/administradores'
 import { initialData } from './data/seed-data'
 
 @Injectable()
@@ -24,9 +24,9 @@ export class SeedService {
     @InjectRepository(PuntoRef)
     private readonly puntoRefRepository: Repository<PuntoRef>,
     private readonly puntoRefService: PuntoRefService,
-    @InjectRepository(Omnibus)
-    private readonly omnibusRepository: Repository<Omnibus>,
-    private readonly omnibusService: OmnibusService,
+    @InjectRepository(Vehiculo)
+    private readonly vehiculoRepository: Repository<Vehiculo>,
+    private readonly vehiculoService: VehiculoService,
     @InjectRepository(Ruta) private readonly rutaRepository: Repository<Ruta>,
     private readonly rutaService: RutaService,
   ) {}
@@ -39,7 +39,7 @@ export class SeedService {
     console.log(_adminsIds)
 
     await this.insertPuntosRef()
-    await this.insertOmnibuses()
+    await this.insertVehiculos()
     await this.insertRutas()
 
     const _choferesIds = await this.insertChoferes()
@@ -57,7 +57,7 @@ export class SeedService {
     const queryBuilder1 = this.puntoRefRepository.createQueryBuilder()
     await queryBuilder1.delete().where({}).execute()
 
-    const queryBuilder2 = this.omnibusRepository.createQueryBuilder()
+    const queryBuilder2 = this.vehiculoRepository.createQueryBuilder()
     await queryBuilder2.delete().where({}).execute()
   }
 
@@ -86,15 +86,15 @@ export class SeedService {
     await Promise.all(puntosRef)
     return 'PUNTOSREF INSERTED'
   }
-  private async insertOmnibuses() {
-    const seedOmnibus = initialData.omnibuses
-    const omnibuses: Promise<string>[] = []
+  private async insertVehiculos() {
+    const seedVehiculos = initialData.vehiculos
+    const vehiculos: Promise<string>[] = []
 
-    for (const omnibus of seedOmnibus) {
-      omnibuses.push(this.omnibusService.create(omnibus))
+    for (const vehiculo of seedVehiculos) {
+      vehiculos.push(this.vehiculoService.create(vehiculo))
     }
-    await Promise.all(omnibuses)
-    return 'ÓMNIBUSES INSERTED'
+    await Promise.all(vehiculos)
+    return 'VEHÍCULOS INSERTED'
   }
   private async insertRutas() {
     const seedRutas = initialData.rutas

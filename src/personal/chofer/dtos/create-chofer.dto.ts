@@ -50,7 +50,7 @@ export class CreateChoferDto {
 
   @IsString()
   @IsOptional()
-  omnibusChapa?: string
+  vehiculoMatricula?: string
 
   @IsString()
   @IsOptional()

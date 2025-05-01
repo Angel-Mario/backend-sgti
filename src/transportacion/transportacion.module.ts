@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common'
-import { OmnibusModule } from './omnibus/omnibus.module'
+import { VehiculoModule } from './vehiculo/vehiculo.module'
 import { AveriaModule } from './averia/averia.module'
+import { SolicitudPiezaModule } from './solicitud_pieza/solicitud-pieza.module'
 
 @Module({
-  imports: [OmnibusModule, AveriaModule],
-  exports: [OmnibusModule, AveriaModule],
+  imports: [VehiculoModule, AveriaModule, SolicitudPiezaModule],
+  exports: [VehiculoModule, AveriaModule, SolicitudPiezaModule],
   controllers: [],
   providers: [],
 })

@@ -6,7 +6,7 @@ import responseNotFoundMaker from 'src/common/functions/responseNotFoundMaker'
 import handleDBErrors from 'src/common/handlers/handleDBErrors'
 import { RutaService } from 'src/geografico/ruta/ruta.service'
 import { DataSource, Repository } from 'typeorm'
-import { OmnibusService } from './../../transportacion/omnibus/omnibus.service'
+import { VehiculoService } from '../../transportacion/vehiculo/vehiculo.service'
 import { CreateChoferDto } from './dtos/create-chofer.dto'
 import { PaginationChoferDto } from './dtos/pagination-chofer.dto'
 import { UpdateChoferDto } from './dtos/update-chofer.dto'
@@ -20,7 +20,7 @@ export class ChoferService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private dataSource: DataSource,
-    private readonly omnibusService: OmnibusService,
+    private readonly vehiculoService: VehiculoService,
     private readonly rutaService: RutaService,
   ) {}
   async findAll(paginationDto: PaginationChoferDto) {
@@ -33,15 +33,13 @@ export class ChoferService {
       column = '',
     } = paginationDto
 
-    console.log(sorting)
-
     let query = this.choferRepository
       .createQueryBuilder('chofer')
       .leftJoinAndSelect('chofer.user', 'user')
       .leftJoinAndSelect(
-        'chofer.omnibus',
-        'chofer.omnibus',
-        'chofer.omnibus IS NOT NULL',
+        'chofer.vehiculo',
+        'chofer.vehiculo',
+        'chofer.vehiculo IS NOT NULL',
       )
       .leftJoinAndSelect(
         'chofer.ruta',
@@ -49,7 +47,7 @@ export class ChoferService {
         'chofer.ruta IS NOT NULL',
       )
       .skip(pageSize * (page - 1))
-      .take(pageSize || pageSize)
+      .take(pageSize)
       .orderBy(
         `user.${sorting || 'id'}`,
         `${order.toLocaleLowerCase() === 'asc' ? 'ASC' : 'DESC'}`,
@@ -66,20 +64,25 @@ export class ChoferService {
         search: true,
       })
     } else if (search !== '' && column !== '') {
-      query = query.where(`CAST(user.${column} AS TEXT) ILIKE(:search)`, {
-        search: `%${search}%`,
-      })
+      query = query.where(
+        column === 'id'
+          ? 'CAST(chofer.id AS TEXT) ILIKE(:search)'
+          : `CAST(user.${column} AS TEXT) ILIKE(:search)`,
+        {
+          search: `%${search}%`,
+        },
+      )
     }
 
     const data = await query.getManyAndCount()
 
     return {
       data: data[0].map((chofer) => {
-        const { id: _id, residencia, user, omnibus, ruta } = chofer
-        const { id, roles: _roles, ...rest } = user
+        const { id, residencia, user, vehiculo, ruta } = chofer
+        const { id: _id, roles: _roles, ...rest } = user
         return {
           id: id,
-          omnibus,
+          vehiculo,
           ruta,
           residencia,
           ...rest,
@@ -98,8 +101,13 @@ export class ChoferService {
 
   async create(createChoferDto: CreateChoferDto) {
     try {
-      const { password, omnibusChapa, rutaNombre, residencia, ...userData } =
-        createChoferDto
+      const {
+        password,
+        vehiculoMatricula,
+        rutaNombre,
+        residencia,
+        ...userData
+      } = createChoferDto
 
       const user = {
         ...userData,
@@ -109,9 +117,9 @@ export class ChoferService {
       }
 
       const chofer = new Chofer()
-      if (omnibusChapa) {
-        const omnibus = await this.omnibusService.findOne(omnibusChapa)
-        if (omnibus) chofer.omnibus = omnibus
+      if (vehiculoMatricula) {
+        const vehiculo = await this.vehiculoService.findOne(vehiculoMatricula)
+        if (vehiculo) chofer.vehiculo = vehiculo
       }
       if (residencia) {
         chofer.residencia = residencia
@@ -129,15 +137,15 @@ export class ChoferService {
     }
   }
   async update(id: string, updateChoferDto: UpdateChoferDto) {
-    const { omnibusChapa, residencia, rutaNombre, ...userData } =
+    const { vehiculoMatricula, residencia, rutaNombre, ...userData } =
       updateChoferDto
 
     const chofer = await this.findOne(id)
     const user = await this.userRepository.findOneBy({ id: chofer.user.id })
 
-    if (omnibusChapa) {
-      if (!chofer.omnibus || chofer.omnibus.chapa !== omnibusChapa)
-        chofer.omnibus = await this.omnibusService.findOne(omnibusChapa)
+    if (vehiculoMatricula) {
+      if (!chofer.vehiculo || chofer.vehiculo.matricula !== vehiculoMatricula)
+        chofer.vehiculo = await this.vehiculoService.findOne(vehiculoMatricula)
     }
     if (rutaNombre) {
       if (!chofer.ruta || chofer.ruta.nombre !== rutaNombre)
@@ -201,8 +209,13 @@ export class ChoferService {
 
     for (const createChoferDto of createChoferDtos) {
       try {
-        const { password, omnibusChapa, rutaNombre, residencia, ...userData } =
-          createChoferDto
+        const {
+          password,
+          vehiculoMatricula,
+          rutaNombre,
+          residencia,
+          ...userData
+        } = createChoferDto
 
         const user = {
           ...userData,
@@ -212,9 +225,9 @@ export class ChoferService {
         }
 
         const chofer = new Chofer()
-        if (omnibusChapa) {
-          const omnibus = await this.omnibusService.findOne(omnibusChapa)
-          if (omnibus) chofer.omnibus = omnibus
+        if (vehiculoMatricula) {
+          const vehiculo = await this.vehiculoService.findOne(vehiculoMatricula)
+          if (vehiculo) chofer.vehiculo = vehiculo
         }
         if (residencia) {
           chofer.residencia = residencia

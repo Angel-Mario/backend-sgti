@@ -41,7 +41,7 @@ export class AdministradorService {
       .createQueryBuilder('admin')
       .leftJoinAndSelect('admin.user', 'user')
       .skip(pageSize * (page - 1))
-      .take(pageSize || pageSize)
+      .take(pageSize)
       .orderBy(
         `user.${sorting || 'id'}`,
         `${order.toLocaleLowerCase() === 'asc' ? 'ASC' : 'DESC'}`,
@@ -54,9 +54,14 @@ export class AdministradorService {
     ) {
       query = query.where(`user.${column} = :search`, { search: true })
     } else if (search !== '' && column !== '') {
-      query = query.where(`CAST(user.${column} AS TEXT) ILIKE(:search)`, {
-        search: `%${search}%`,
-      })
+      query = query.where(
+        column === 'id'
+          ? 'CAST(admin.id AS TEXT) ILIKE(:search)'
+          : `CAST(user.${column} AS TEXT) ILIKE(:search)`,
+        {
+          search: `%${search}%`,
+        },
+      )
     }
 
     const data = await query.getManyAndCount()

@@ -43,7 +43,7 @@ export class SuministradorService {
 
       .leftJoinAndSelect('sumin.user', 'user')
       .skip(pageSize * (page - 1))
-      .take(pageSize || pageSize)
+      .take(pageSize)
       .orderBy(
         `user.${sorting || 'id'}`,
         `${order.toLocaleLowerCase() === 'asc' ? 'ASC' : 'DESC'}`,

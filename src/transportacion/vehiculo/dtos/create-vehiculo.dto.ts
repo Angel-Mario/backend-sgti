@@ -1,8 +1,8 @@
 import { IsInt, IsOptional, IsPositive, IsString } from 'class-validator'
 
-export class CreateOmnibusDto {
+export class CreateVehiculoDto {
   @IsString()
-  chapa: string
+  matricula: string
 
   @IsOptional()
   @IsPositive()

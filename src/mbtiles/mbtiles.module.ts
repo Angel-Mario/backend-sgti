@@ -21,7 +21,6 @@ export class MbtilesModule {
       '../',
       'maps/OUTPUT_FILE.mbtiles',
     )
-    console.log(mbtilesPath)
 
     try {
       await this.mbtilesService.openDatabase(mbtilesPath)

@@ -1,5 +1,5 @@
-export interface SeedOmnibus {
-  chapa: string
+export interface SeedVehiculo {
+  matricula: string
   consumo?: number
   capacidad?: number
   marca?: string
@@ -7,9 +7,9 @@ export interface SeedOmnibus {
   año?: number
 }
 
-export const omnibuses: SeedOmnibus[] = [
+export const vehiculos: SeedVehiculo[] = [
   {
-    chapa: 'ABC123',
+    matricula: 'ABC123',
     consumo: 5,
     capacidad: 4,
     marca: 'Toyota',
@@ -17,7 +17,7 @@ export const omnibuses: SeedOmnibus[] = [
     año: 2020,
   },
   {
-    chapa: 'DEF456',
+    matricula: 'DEF456',
     consumo: 7,
     capacidad: 6,
     marca: 'Ford',
@@ -25,7 +25,7 @@ export const omnibuses: SeedOmnibus[] = [
     año: 2018,
   },
   {
-    chapa: 'GHI789',
+    matricula: 'GHI789',
     consumo: 3,
     capacidad: 5,
     marca: 'Chevrolet',
@@ -33,7 +33,7 @@ export const omnibuses: SeedOmnibus[] = [
     año: 2019,
   },
   {
-    chapa: 'JKL012',
+    matricula: 'JKL012',
     consumo: 6,
     capacidad: 7,
     marca: 'Dodge',
