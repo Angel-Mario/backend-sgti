@@ -5,6 +5,7 @@ import { Auth, GetUser } from './decorators'
 import { LoginUserDto } from './dto/login-user.dto'
 import { User } from './entities/user.entity'
 import { ValidRoles } from './interfaces/valid-roles'
+import { UpdateProfileDto } from './dto/update-profile.dto'
 
 @Controller('auth')
 export class AuthController {
@@ -24,6 +25,11 @@ export class AuthController {
   @Auth(ValidRoles.admin, ValidRoles.chofer, ValidRoles.suministrador)
   me(@UserId() id: string) {
     return this.authService.me(id)
+  }
+  @Get('profile')
+  @Auth(ValidRoles.admin, ValidRoles.chofer, ValidRoles.suministrador)
+  updateProfile(@UserId() id: string, @Body() updateProfile: UpdateProfileDto) {
+    return this.authService.updateProfile(id, updateProfile)
   }
 
   @Get('private')

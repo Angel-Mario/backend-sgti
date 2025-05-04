@@ -36,20 +36,14 @@ export class ChoferService {
     let query = this.choferRepository
       .createQueryBuilder('chofer')
       .leftJoinAndSelect('chofer.user', 'user')
-      .leftJoinAndSelect(
-        'chofer.vehiculo',
-        'chofer.vehiculo',
-        'chofer.vehiculo IS NOT NULL',
-      )
-      .leftJoinAndSelect(
-        'chofer.ruta',
-        'chofer.ruta',
-        'chofer.ruta IS NOT NULL',
-      )
+      .leftJoinAndSelect('chofer.vehiculo', 'vehiculo')
+      .leftJoinAndSelect('chofer.ruta', 'ruta')
       .skip(pageSize * (page - 1))
       .take(pageSize)
       .orderBy(
-        `user.${sorting || 'id'}`,
+        ['id', 'residencia'].includes(sorting)
+          ? `chofer.${sorting || 'id'}`
+          : `user.${sorting || 'id'}`,
         `${order.toLocaleLowerCase() === 'asc' ? 'ASC' : 'DESC'}`,
       )
     if (column === 'isActive' && search.toLocaleLowerCase() === 'inactivo') {
@@ -65,8 +59,8 @@ export class ChoferService {
       })
     } else if (search !== '' && column !== '') {
       query = query.where(
-        column === 'id'
-          ? 'CAST(chofer.id AS TEXT) ILIKE(:search)'
+        ['id', 'residencia'].includes(column)
+          ? `CAST(chofer.${column} AS TEXT) ILIKE(:search)`
           : `CAST(user.${column} AS TEXT) ILIKE(:search)`,
         {
           search: `%${search}%`,
@@ -146,16 +140,22 @@ export class ChoferService {
     if (vehiculoMatricula) {
       if (!chofer.vehiculo || chofer.vehiculo.matricula !== vehiculoMatricula)
         chofer.vehiculo = await this.vehiculoService.findOne(vehiculoMatricula)
+    } else {
+      chofer.vehiculo = null
     }
     if (rutaNombre) {
       if (!chofer.ruta || chofer.ruta.nombre !== rutaNombre)
         chofer.ruta = await this.rutaService.findOne(rutaNombre)
+    } else {
+      chofer.ruta = null
     }
     try {
+      if (userData.password) {
+        userData.password = bcrypt.hashSync(userData.password, 10)
+      }
       Object.assign(user, userData)
       chofer.user = user
-      Object.assign(chofer, residencia)
-
+      chofer.residencia = residencia
       return await this.choferRepository.save(chofer)
     } catch (error) {
       handleDBErrors(error)

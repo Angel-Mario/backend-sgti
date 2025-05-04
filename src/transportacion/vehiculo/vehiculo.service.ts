@@ -57,18 +57,14 @@ export class VehiculoService {
   }
 
   async findAllSimplex() {
-    const vehiculoes = await this.vehiculoRepository.find({
-      select: {
-        id: false,
-        matricula: true,
-        marca: false,
-        modelo: false,
-        capacidad: false,
-        año: false,
-        consumo: false,
-      },
-    })
-    return vehiculoes.map((obj) => obj.matricula)
+    const vehiculos = await this.vehiculoRepository
+      .createQueryBuilder('vehiculo')
+      .leftJoin(Chofer, 'chofer', 'chofer.vehiculoId = vehiculo.id')
+      .where('chofer.id IS NULL')
+      .select('vehiculo.matricula', 'matricula')
+      .getRawMany()
+
+    return vehiculos.map((obj) => obj.matricula)
   }
 
   async update(id: string, updatevehiculoDto: UpdateVehiculoDto) {

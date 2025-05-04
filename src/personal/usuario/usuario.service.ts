@@ -33,7 +33,7 @@ export class UsuarioService {
     let query = this.userRepository
       .createQueryBuilder('user')
       .skip(pageSize * (page - 1))
-      .take(pageSize || pageSize)
+      .take(pageSize)
       .orderBy(
         `user.${sorting || 'id'}`,
         `${order.toLocaleLowerCase() === 'asc' ? 'ASC' : 'DESC'}`,
@@ -75,6 +75,9 @@ export class UsuarioService {
           this.choferService.softDelete(id)
         else if (user.roles.includes('suministrador'))
           this.suministradorService.softDelete(id)
+      }
+      if (updateUserDto.password) {
+        updateUserDto.password = bcrypt.hashSync(updateUserDto.password, 10)
       }
       Object.assign(user, updateUserDto)
 

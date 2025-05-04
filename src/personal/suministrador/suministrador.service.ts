@@ -56,9 +56,14 @@ export class SuministradorService {
     ) {
       query = query.where(`user.${column} = :search`, { search: true })
     } else if (search !== '' && column !== '') {
-      query = query.where(`CAST(user.${column} AS TEXT) ILIKE(:search)`, {
-        search: `%${search}%`,
-      })
+      query = query.where(
+        ['id', 'cargo'].includes(column)
+          ? `CAST(sumin.${column} AS TEXT) ILIKE(:search)`
+          : `CAST(user.${column} AS TEXT) ILIKE(:search)`,
+        {
+          search: `%${search}%`,
+        },
+      )
     }
 
     const data = await query.getManyAndCount()

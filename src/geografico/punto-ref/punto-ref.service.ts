@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { PuntoRef } from './entities/punto-ref.entity'
 import { In, Repository } from 'typeorm'
 import handleDBErrors from 'src/common/handlers/handleDBErrors'
+import { Ruta } from '../ruta/entities/ruta.entity'
 
 @Injectable()
 export class PuntoRefService {
@@ -26,6 +27,13 @@ export class PuntoRefService {
 
     const query = this.puntoRefRepository
       .createQueryBuilder('puntoRef')
+      .leftJoinAndMapMany(
+        'puntoRef.rutas', // Nueva propiedad en el objeto puntoRef
+        Ruta, // La entidad que queremos unir (Ruta)
+        'ruta', // Alias para la entidad Ruta en la consulta
+        'ruta.puntoSalida = puntoRef.id OR ruta.puntoRegreso = puntoRef.id', // Condición de join
+      )
+      // .select(['puntoRef', 'ruta.nombre'])
       .skip((page - 1) * pageSize)
       .take(pageSize)
       .orderBy(
@@ -47,7 +55,20 @@ export class PuntoRefService {
     const data = await query.getManyAndCount()
 
     return {
-      data: data[0],
+      data: data[0].map(
+        (punto: {
+          id: number
+          nombre: string
+          latLong: string
+          rutas: Ruta[]
+        }) => {
+          return {
+            ...punto,
+            rutas: undefined,
+            usage: { rutas: punto.rutas.map((ruta) => ruta.nombre),terminales:[],puntos_combustible:[] },
+          }
+        },
+      ),
       count: data[1],
       pages: Math.ceil(data[1] / pageSize),
     }

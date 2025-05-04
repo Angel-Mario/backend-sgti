@@ -10,6 +10,8 @@ import { Repository } from 'typeorm'
 import { LoginUserDto } from './dto/login-user.dto'
 import { User } from './entities/user.entity'
 import { JwtPayload } from './interfaces/jwt-payload.interface'
+import { UpdateProfileDto } from './dto/update-profile.dto'
+import handleDBErrors from 'src/common/handlers/handleDBErrors'
 
 @Injectable()
 export class AuthService {
@@ -20,6 +22,16 @@ export class AuthService {
   async me(id: string) {
     const user = await this.userRepository.findOneBy({ id })
     return user
+  }
+  async updateProfile(id: string, updateProfile: UpdateProfileDto) {
+    const user = await this.userRepository.findOneBy({ id })
+
+    try {
+      Object.assign(user, updateProfile)
+      return await this.userRepository.save(user)
+    } catch (error) {
+      handleDBErrors(error)
+    }
   }
 
   async login(loginUserDto: LoginUserDto) {

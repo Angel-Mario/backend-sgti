@@ -103,8 +103,11 @@ export class AdministradorService {
     const userId = (await this.findOne(id)).user.id
     const user = await this.userRepository.findOneBy({ id: userId })
 
+    if (updateUserDto.password) {
+      updateUserDto.password = bcrypt.hashSync(updateUserDto.password, 10)
+    }
+    Object.assign(user, updateUserDto)
     try {
-      Object.assign(user, updateUserDto)
       return await this.userRepository.save(user)
     } catch (error) {
       handleDBErrors(error)

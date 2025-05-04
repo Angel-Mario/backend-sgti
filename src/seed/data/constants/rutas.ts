@@ -23,4 +23,12 @@ export const rutas: SeedRuta[] = [
     puntoSalida: 'Parque',
     puntoRegreso: 'Hospital',
   },
+  {
+    nombre: 'Ruta 3',
+    distancia: 10,
+    hora_salida: '09:30',
+    hora_regreso: '18:30',
+    puntoSalida: 'Parque',
+    puntoRegreso: 'Hospital',
+  },
 ]

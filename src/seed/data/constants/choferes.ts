@@ -12,7 +12,7 @@ export interface SeedChofer {
 
 export const choferes: SeedChofer[] = [
   {
-    nombre_u: 'Juan',
+    nombre_u: 'juan',
     fullName: 'Juan Perez',
     password: '123456As8',
     correo: 'juan@gmail.com',
@@ -22,7 +22,7 @@ export const choferes: SeedChofer[] = [
     rutaNombre: 'Ruta 1',
   },
   {
-    nombre_u: 'Pedro',
+    nombre_u: 'pedro',
     fullName: 'Pedro Perez',
     password: '123456As8',
     correo: 'pedro@gmail.com',
@@ -32,13 +32,13 @@ export const choferes: SeedChofer[] = [
     rutaNombre: 'Ruta 2',
   },
   {
-    nombre_u: 'Carlos',
+    nombre_u: 'carlos',
     fullName: 'Carlos Perez',
     password: '123456As8',
     correo: 'carlos@gmail.com',
     carnet: 10000000032,
     residencia: '3',
     vehiculoMatricula: 'GHI789',
-    rutaNombre: 'Ruta 2',
+    rutaNombre: 'Ruta 3',
   },
 ]

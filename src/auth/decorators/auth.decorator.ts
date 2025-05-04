@@ -8,5 +8,6 @@ export function Auth(...roles: ValidRoles[]) {
   return applyDecorators(
     RoleProtected(...roles),
     UseGuards(AuthGuard('jwt'), UserRoleGuard),
+    // ApiUnauthorizedResponse({ description: 'Unauthorized' }),
   )
 }
