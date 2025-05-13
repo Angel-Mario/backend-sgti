@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
-import { PaginationPuntoRefDto } from './dto/pagination-usuario.dto'
+import { PaginationPuntoRefDto } from './dto/pagination-punto-ref.dto'
 import { CreatePuntoRefDto } from './dto/create-punto-ref.dto'
 import { UpdatePuntoRefDto } from './dto/update-punto-ref.dto'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -65,7 +65,11 @@ export class PuntoRefService {
           return {
             ...punto,
             rutas: undefined,
-            usage: { rutas: punto.rutas.map((ruta) => ruta.nombre),terminales:[],puntos_combustible:[] },
+            usage: {
+              rutas: punto.rutas.map((ruta) => ruta.nombre),
+              terminales: [],
+              puntos_combustible: [],
+            },
           }
         },
       ),

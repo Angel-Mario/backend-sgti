@@ -11,7 +11,7 @@ export const puntosRef: SeedPuntoRef[] = [
   },
   {
     nombre: 'Escuela',
-    latLong: '19.4327, -98.5076',
+    latLong: '22.991900, -82.466039',
   },
   {
     nombre: 'Parque',

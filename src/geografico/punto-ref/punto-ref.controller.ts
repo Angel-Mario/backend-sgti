@@ -1,4 +1,4 @@
-import { PaginationPuntoRefDto } from './dto/pagination-usuario.dto'
+import { PaginationPuntoRefDto } from './dto/pagination-punto-ref.dto'
 import { PuntoRefService } from './punto-ref.service'
 import {
   Body,
