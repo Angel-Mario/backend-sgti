@@ -92,6 +92,13 @@ export class ChoferService {
     if (!chofer) throw new NotFoundException('Chofer no encontrado')
     return chofer
   }
+  async findOneByUserId(userId: string) {
+    const chofer = await this.choferRepository.findOneBy({
+      user: { id: userId },
+    })
+    if (!chofer) throw new NotFoundException('Chofer no encontrado')
+    return chofer
+  }
 
   async create(createChoferDto: CreateChoferDto) {
     try {

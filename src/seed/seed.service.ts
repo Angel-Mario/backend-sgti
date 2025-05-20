@@ -11,8 +11,13 @@ import { Repository } from 'typeorm'
 import { VehiculoService } from '../transportacion/vehiculo/vehiculo.service'
 import { AdministradorService } from './../personal/administrador/administrador.service'
 import { UsuarioService } from './../personal/usuario/usuario.service'
-// import { administradores } from './data/constants/administradores'
 import { initialData } from './data/seed-data'
+import { Terminal } from 'src/geografico/terminal/entities/terminal.entity'
+import { TerminalService } from 'src/geografico/terminal/terminal.service'
+import { PuntoCombustible } from 'src/geografico/punto-comb/entities/punto-comb.entity'
+import { PuntoCombustibleService } from 'src/geografico/punto-comb/punto-comb.service'
+import { Averia } from 'src/transportacion/averia/entities/averia.entity'
+import { AveriaService } from 'src/transportacion/averia/averia.service'
 
 @Injectable()
 export class SeedService {
@@ -29,6 +34,15 @@ export class SeedService {
     private readonly vehiculoService: VehiculoService,
     @InjectRepository(Ruta) private readonly rutaRepository: Repository<Ruta>,
     private readonly rutaService: RutaService,
+    @InjectRepository(Terminal)
+    private readonly terminalRepository: Repository<Terminal>,
+    private readonly terminalService: TerminalService,
+    @InjectRepository(PuntoCombustible)
+    private readonly puntoCombustibleRepository: Repository<PuntoCombustible>,
+    private readonly puntoCombustibleService: PuntoCombustibleService,
+    @InjectRepository(Averia)
+    private readonly averiaRepository: Repository<Averia>,
+    private readonly averiaService: AveriaService,
   ) {}
 
   async rundSeed() {
@@ -41,6 +55,8 @@ export class SeedService {
     await this.insertPuntosRef()
     await this.insertVehiculos()
     await this.insertRutas()
+    await this.insertTerminales()
+    await this.insertPuntosCombustibles()
 
     const _choferesIds = await this.insertChoferes()
     console.log(_choferesIds)
@@ -51,14 +67,23 @@ export class SeedService {
     const queryBuilder0 = this.userRepository.createQueryBuilder()
     await queryBuilder0.delete().where({}).execute()
 
-    const queryBuilder3 = this.rutaRepository.createQueryBuilder()
-    await queryBuilder3.delete().where({}).execute()
-
-    const queryBuilder1 = this.puntoRefRepository.createQueryBuilder()
+    const queryBuilder1 = this.rutaRepository.createQueryBuilder()
     await queryBuilder1.delete().where({}).execute()
 
-    const queryBuilder2 = this.vehiculoRepository.createQueryBuilder()
+    const queryBuilder2 = this.terminalRepository.createQueryBuilder()
     await queryBuilder2.delete().where({}).execute()
+
+    const queryBuilder3 = this.puntoCombustibleRepository.createQueryBuilder()
+    await queryBuilder3.delete().where({}).execute()
+
+    const queryBuilder4 = this.puntoRefRepository.createQueryBuilder()
+    await queryBuilder4.delete().where({}).execute()
+
+    const queryBuilder5 = this.averiaRepository.createQueryBuilder()
+    await queryBuilder5.delete().where({}).execute()
+
+    const queryBuilder6 = this.vehiculoRepository.createQueryBuilder()
+    await queryBuilder6.delete().where({}).execute()
   }
 
   private async insertUsers() {
@@ -107,5 +132,25 @@ export class SeedService {
   }
   private async insertChoferes() {
     return await this.choferService.createMany(initialData.choferes)
+  }
+  private async insertTerminales() {
+    const seedTerminales = initialData.terminales
+    const terminales: Promise<string>[] = []
+    for (const terminal of seedTerminales) {
+      terminales.push(this.terminalService.create(terminal))
+    }
+    await Promise.all(terminales)
+    return 'TERMINALES INSERTED'
+  }
+  private async insertPuntosCombustibles() {
+    const seedPuntosCombustibles = initialData.puntosCombustibles
+    const puntosCombustibles: Promise<string>[] = []
+    for (const puntoCombustible of seedPuntosCombustibles) {
+      puntosCombustibles.push(
+        this.puntoCombustibleService.create(puntoCombustible),
+      )
+    }
+    await Promise.all(puntosCombustibles)
+    return 'PUNTOS COMBUSTIBLES INSERTED'
   }
 }

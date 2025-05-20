@@ -7,7 +7,7 @@ export interface SeedPuntoRef {
 export const puntosRef: SeedPuntoRef[] = [
   {
     nombre: 'Casa',
-    latLong: '19.4326, -98.5076',
+    latLong: '23.044589608326014, -82.4696445465088',
   },
   {
     nombre: 'Escuela',

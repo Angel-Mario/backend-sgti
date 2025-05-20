@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common'
 import { UpdatePuntoRefDto } from './dto/update-punto-ref.dto'
 import { CreatePuntoRefDto } from './dto/create-punto-ref.dto'
-import { DeleteManyDtoNumber } from './dto/delete-manynum.dto'
+import { DeleteManyIntDto } from 'src/common/dtos/delete-many-int.dto'
 
 @Controller('geografico/puntos-ref')
 export class PuntoRefController {
@@ -46,7 +46,7 @@ export class PuntoRefController {
   }
 
   @Delete()
-  removeMany(@Body() deleteManyDto: DeleteManyDtoNumber) {
+  removeMany(@Body() deleteManyDto: DeleteManyIntDto) {
     return this.puntoRefService.removeMany(deleteManyDto.ids)
   }
 }

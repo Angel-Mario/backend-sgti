@@ -6,6 +6,7 @@ import { In, Repository } from 'typeorm'
 import handleDBErrors from 'src/common/handlers/handleDBErrors'
 import { CreateTerminalDto } from './dto/create-terminal.dto'
 import { UpdateTerminalDto } from './dto/update-terminal.dto'
+import { PaginationTerminalDto } from './dto/pagination-terminal.dto'
 
 @Injectable()
 export class TerminalService {
@@ -24,7 +25,7 @@ export class TerminalService {
     })
     return nombres.map((terminal) => terminal.nombre)
   }
-  async findAll() {
+  async findAll(paginationDto: PaginationTerminalDto) {
     const terminals = await this.terminalRepository.find()
     return terminals
   }
@@ -36,7 +37,7 @@ export class TerminalService {
   async create(createTerminalDto: CreateTerminalDto) {
     try {
       const puntoRef = await this.puntoRefService.findOneByName(
-        createTerminalDto.nombre,
+        createTerminalDto.puntoRef,
       )
       const terminal = this.terminalRepository.create({
         nombre: createTerminalDto.nombre,
@@ -51,7 +52,7 @@ export class TerminalService {
   async update(id: number, updateTerminalDto: UpdateTerminalDto) {
     const terminal = await this.findOne(id)
     const puntoRef = await this.puntoRefService.findOneByName(
-      updateTerminalDto.nombre,
+      updateTerminalDto.puntoRef,
     )
     terminal.nombre = updateTerminalDto.nombre
     terminal.puntoRef = puntoRef
@@ -61,7 +62,7 @@ export class TerminalService {
       handleDBErrors(error)
     }
   }
-  async removeMany(ids: string[]) {
+  async removeMany(ids: number[]) {
     const deleteResult = await this.terminalRepository.delete({ id: In(ids) })
     if (deleteResult.affected === 0) {
       throw new NotFoundException(

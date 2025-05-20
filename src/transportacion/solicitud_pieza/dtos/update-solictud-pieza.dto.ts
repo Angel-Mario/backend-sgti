@@ -1,6 +1,6 @@
-import { PartialType } from '@nestjs/mapped-types'
-import { CreateSolicitudPiezaDto } from './create-solicitud-pieza.dto'
+import { IsEnum } from 'class-validator'
 
-export class UpdateSolicitudPiezaDto extends PartialType(
-  CreateSolicitudPiezaDto,
-) {}
+export class UpdateSolicitudPiezaDto {
+  @IsEnum(['pendiente', 'aceptada', 'rechazada'])
+  estado: string
+}

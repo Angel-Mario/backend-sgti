@@ -6,8 +6,8 @@ import { Terminal } from './entities/terminal.entity'
 import { PuntoRefModule } from '../punto-ref/punto-ref.module'
 
 @Module({
-  controllers: [TerminalController],
   imports: [TypeOrmModule.forFeature([Terminal]), PuntoRefModule],
+  controllers: [TerminalController],
   exports: [TerminalService, TypeOrmModule],
   providers: [TerminalService],
 })

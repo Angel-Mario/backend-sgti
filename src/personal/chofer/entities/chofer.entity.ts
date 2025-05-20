@@ -38,7 +38,7 @@ export class Chofer {
   @JoinColumn()
   vehiculo?: Vehiculo
 
-  @ManyToOne(() => Ruta, { eager: true })
+  @ManyToOne(() => Ruta, { eager: true, onDelete: 'SET NULL' })
   @JoinColumn()
   ruta?: Ruta
 }

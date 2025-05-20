@@ -1,5 +1,5 @@
 import { IsString, MinLength } from 'class-validator'
-export class CreateTerminalDto {
+export class CreatePuntoCombustibleDto {
   @IsString()
   @MinLength(4)
   nombre: string

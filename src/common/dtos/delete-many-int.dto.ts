@@ -5,7 +5,7 @@ import {
   IsPositive,
 } from 'class-validator'
 
-export class DeleteManyDtoNumber {
+export class DeleteManyIntDto {
   @IsArray()
   @IsPositive({ each: true })
   @ArrayNotEmpty({ message: 'IDs array cannot be empty' })

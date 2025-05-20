@@ -1,5 +1,3 @@
-import { PuntoCombModule } from './geografico/punto-comb/punto-comb.module'
-import { TerminalModule } from './geografico/terminal/terminal.module'
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'

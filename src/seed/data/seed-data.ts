@@ -1,9 +1,11 @@
-import { administradores, SeedAdministrador } from './constants'
-import { vehiculos, SeedVehiculo } from './constants'
-import { usuarios, SeedUser } from './constants'
-import { puntosRef, SeedPuntoRef } from './constants'
-import { rutas, SeedRuta } from './constants'
-import { choferes, SeedChofer } from './constants'
+import { administradores, type SeedAdministrador } from './constants'
+import { vehiculos, type SeedVehiculo } from './constants'
+import { usuarios, type SeedUser } from './constants'
+import { puntosRef, type SeedPuntoRef } from './constants'
+import { rutas, type SeedRuta } from './constants'
+import { choferes, type SeedChofer } from './constants'
+import { terminales, type SeedTerminal } from './constants'
+import { puntosCombustibles, type SeedPuntoCombustible } from './constants'
 
 interface SeedData {
   users: SeedUser[]
@@ -12,6 +14,8 @@ interface SeedData {
   puntosRef: SeedPuntoRef[]
   vehiculos: SeedVehiculo[]
   rutas: SeedRuta[]
+  terminales: SeedTerminal[]
+  puntosCombustibles: SeedPuntoCombustible[]
 }
 
 export const initialData: SeedData = {
@@ -21,4 +25,6 @@ export const initialData: SeedData = {
   puntosRef: puntosRef,
   vehiculos: vehiculos,
   rutas: rutas,
+  terminales: terminales,
+  puntosCombustibles: puntosCombustibles,
 }
