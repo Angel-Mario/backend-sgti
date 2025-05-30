@@ -86,6 +86,10 @@ export class ChoferService {
       pages: Math.ceil(data[1] / pageSize),
     }
   }
+  async me(id: string) {
+    const chofer = await this.findOneByUserId(id)
+    return { ...chofer, user: undefined }
+  }
 
   async findOne(id: string) {
     const chofer = await this.choferRepository.findOneBy({ id })
@@ -250,7 +254,7 @@ export class ChoferService {
             await this.choferRepository.save(
               this.choferRepository.create(chofer),
             )
-          ).id,
+          ).user.id,
         )
       } catch (error) {
         handleDBErrors(error)

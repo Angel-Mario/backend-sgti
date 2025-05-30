@@ -1,3 +1,4 @@
+import { solicitudes_pieza, type SeedSolicitudPieza } from './constants'
 import { administradores, type SeedAdministrador } from './constants'
 import { vehiculos, type SeedVehiculo } from './constants'
 import { usuarios, type SeedUser } from './constants'
@@ -16,6 +17,7 @@ interface SeedData {
   rutas: SeedRuta[]
   terminales: SeedTerminal[]
   puntosCombustibles: SeedPuntoCombustible[]
+  solicitudes_pieza: SeedSolicitudPieza[]
 }
 
 export const initialData: SeedData = {
@@ -27,4 +29,5 @@ export const initialData: SeedData = {
   rutas: rutas,
   terminales: terminales,
   puntosCombustibles: puntosCombustibles,
+  solicitudes_pieza: solicitudes_pieza,
 }

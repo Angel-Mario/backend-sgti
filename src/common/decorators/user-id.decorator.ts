@@ -1,5 +1,5 @@
 // user.decorator.ts
-import { createParamDecorator, ExecutionContext } from '@nestjs/common'
+import { ExecutionContext, createParamDecorator } from '@nestjs/common'
 import * as jwt from 'jsonwebtoken'
 
 export const UserId = createParamDecorator(
@@ -11,7 +11,6 @@ export const UserId = createParamDecorator(
 
     const token = authHeader.split(' ')[1]
     const decoded = jwt.decode(token) as { [key: string]: string }
-
     return decoded?.id // Return either 'id' or 'sub'
   },
 )

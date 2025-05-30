@@ -13,6 +13,9 @@ import { PaginationChoferDto } from './dtos/pagination-chofer.dto'
 import { CreateChoferDto } from './dtos/create-chofer.dto'
 import { UpdateChoferDto } from './dtos/update-chofer.dto'
 import { DeleteManyDto } from 'src/common/dtos/delete-many.dto'
+import { Auth } from 'src/auth/decorators'
+import { ValidRoles } from 'src/auth/interfaces/valid-roles'
+import { UserId } from 'src/common/decorators/user-id.decorator'
 
 @Controller('personal/choferes')
 export class ChoferController {
@@ -22,6 +25,12 @@ export class ChoferController {
   findAll(@Query() paginationDto: PaginationChoferDto) {
     return this.choferService.findAll(paginationDto)
   }
+  @Get('me')
+  @Auth(ValidRoles.chofer)
+  me(@UserId() id: string) {
+    return this.choferService.me(id)
+  }
+
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.choferService.findOne(id)

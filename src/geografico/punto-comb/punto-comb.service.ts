@@ -69,7 +69,8 @@ export class PuntoCombustibleService {
   }
   async findOne(id: number) {
     const puntoComb = await this.puntoCombustibleRepository.findOneBy({ id })
-    if (!puntoComb) throw new Error('Punto de Combustible no encontrado')
+    if (!puntoComb)
+      throw new NotFoundException('Punto de Combustible no encontrado')
     return puntoComb
   }
 

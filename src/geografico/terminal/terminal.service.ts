@@ -26,12 +26,46 @@ export class TerminalService {
     return nombres.map((terminal) => terminal.nombre)
   }
   async findAll(paginationDto: PaginationTerminalDto) {
-    const terminals = await this.terminalRepository.find()
-    return terminals
+    const {
+      page = 1,
+      pageSize = +process.env.DEFAULT_PAGE_SIZE,
+      order = process.env.DEFAULT_ORDER,
+      sorting = 'nombre',
+      search = '',
+      column = '',
+    } = paginationDto
+
+    const query = this.terminalRepository
+      .createQueryBuilder('terminal')
+      .leftJoinAndSelect('terminal.puntoRef', 'puntoRef')
+      .skip((page - 1) * pageSize)
+      .take(pageSize)
+      .orderBy(
+        sorting === 'puntoRef' ? 'puntoRef.nombre' : `terminal.${sorting}`,
+        `${order.toLocaleLowerCase() === 'asc' ? 'ASC' : 'DESC'}`,
+      )
+    if (search !== '' && column !== '') {
+      query.where(
+        column === 'puntoRef'
+          ? 'CAST(puntoRef.nombre AS TEXT) ILIKE(:search)'
+          : `CAST(terminal.${column} AS TEXT) ILIKE(:search)`,
+        {
+          search: `%${search}%`,
+        },
+      )
+    }
+
+    const data = await query.getManyAndCount()
+
+    return {
+      data: data[0],
+      count: data[1],
+      pages: Math.ceil(data[1] / pageSize),
+    }
   }
   async findOne(id: number) {
     const terminal = await this.terminalRepository.findOneBy({ id })
-    if (!terminal) throw new Error('Terminal no encontrada')
+    if (!terminal) throw new NotFoundException('Terminal no encontrada')
     return terminal
   }
   async create(createTerminalDto: CreateTerminalDto) {

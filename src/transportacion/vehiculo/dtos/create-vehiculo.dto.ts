@@ -1,7 +1,14 @@
-import { IsInt, IsOptional, IsPositive, IsString } from 'class-validator'
+import {
+  IsInt,
+  IsOptional,
+  IsPositive,
+  IsString,
+  MinLength,
+} from 'class-validator'
 
 export class CreateVehiculoDto {
   @IsString()
+  @MinLength(4)
   matricula: string
 
   @IsOptional()
@@ -13,7 +20,6 @@ export class CreateVehiculoDto {
   @IsInt()
   capacidad?: number
 
-  @IsOptional()
   @IsString()
   marca?: string
 

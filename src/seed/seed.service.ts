@@ -18,6 +18,8 @@ import { PuntoCombustible } from 'src/geografico/punto-comb/entities/punto-comb.
 import { PuntoCombustibleService } from 'src/geografico/punto-comb/punto-comb.service'
 import { Averia } from 'src/transportacion/averia/entities/averia.entity'
 import { AveriaService } from 'src/transportacion/averia/averia.service'
+import { SolicitudPiezaService } from 'src/transportacion/solicitud_pieza/solicitud-pieza.service'
+import { SolicitudPieza } from 'src/transportacion/solicitud_pieza/entities/solicitud-pieza.entity'
 
 @Injectable()
 export class SeedService {
@@ -43,6 +45,9 @@ export class SeedService {
     @InjectRepository(Averia)
     private readonly averiaRepository: Repository<Averia>,
     private readonly averiaService: AveriaService,
+    @InjectRepository(SolicitudPieza)
+    private readonly solicitudPiezaRepository: Repository<SolicitudPieza>,
+    private readonly solicitudPiezaService: SolicitudPiezaService,
   ) {}
 
   async rundSeed() {
@@ -58,32 +63,36 @@ export class SeedService {
     await this.insertTerminales()
     await this.insertPuntosCombustibles()
 
-    const _choferesIds = await this.insertChoferes()
-    console.log(_choferesIds)
+    const choferesUsersIds = await this.insertChoferes()
+    console.log(choferesUsersIds)
+    await this.insertSolicitudesPieza(choferesUsersIds[0])
 
     return 'SEED EXECUTED'
   }
   private async deleteTables() {
-    const queryBuilder0 = this.userRepository.createQueryBuilder()
+    const queryBuilder0 = this.solicitudPiezaRepository.createQueryBuilder()
     await queryBuilder0.delete().where({}).execute()
 
-    const queryBuilder1 = this.rutaRepository.createQueryBuilder()
+    const queryBuilder1 = this.userRepository.createQueryBuilder()
     await queryBuilder1.delete().where({}).execute()
 
-    const queryBuilder2 = this.terminalRepository.createQueryBuilder()
+    const queryBuilder2 = this.rutaRepository.createQueryBuilder()
     await queryBuilder2.delete().where({}).execute()
 
-    const queryBuilder3 = this.puntoCombustibleRepository.createQueryBuilder()
+    const queryBuilder3 = this.terminalRepository.createQueryBuilder()
     await queryBuilder3.delete().where({}).execute()
 
-    const queryBuilder4 = this.puntoRefRepository.createQueryBuilder()
+    const queryBuilder4 = this.puntoCombustibleRepository.createQueryBuilder()
     await queryBuilder4.delete().where({}).execute()
 
-    const queryBuilder5 = this.averiaRepository.createQueryBuilder()
+    const queryBuilder5 = this.puntoRefRepository.createQueryBuilder()
     await queryBuilder5.delete().where({}).execute()
 
-    const queryBuilder6 = this.vehiculoRepository.createQueryBuilder()
+    const queryBuilder6 = this.averiaRepository.createQueryBuilder()
     await queryBuilder6.delete().where({}).execute()
+
+    const queryBuilder7 = this.vehiculoRepository.createQueryBuilder()
+    await queryBuilder7.delete().where({}).execute()
   }
 
   private async insertUsers() {
@@ -152,5 +161,16 @@ export class SeedService {
     }
     await Promise.all(puntosCombustibles)
     return 'PUNTOS COMBUSTIBLES INSERTED'
+  }
+  private async insertSolicitudesPieza(id: string) {
+    const seedSolicitudesPieza = initialData.solicitudes_pieza
+    const solicitudesPieza = []
+    for (const solicitudPieza of seedSolicitudesPieza) {
+      solicitudesPieza.push(
+        this.solicitudPiezaService.create(id, solicitudPieza),
+      )
+    }
+    await Promise.all(solicitudesPieza)
+    return 'SOLICITUDES PIEZA INSERTED'
   }
 }

@@ -14,7 +14,7 @@ import { CreatePuntoCombustibleDto } from './dto/create-punto-comb.dto'
 import { UpdatePuntoCombustibleDto } from './dto/update-punto-comb.dto'
 import { DeleteWithNoContent } from 'src/common/decorators/delete-with-no-content.decorator'
 
-@Controller('geografico/puntos-combustibles')
+@Controller('geografico/puntos-combustible')
 export class PuntoCombController {
   constructor(
     private readonly puntoCombustibleService: PuntoCombustibleService,

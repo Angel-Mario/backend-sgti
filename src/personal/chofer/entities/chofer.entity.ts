@@ -33,7 +33,7 @@ export class Chofer {
   @OneToOne(
     () => Vehiculo,
     (vehiculo) => vehiculo.id,
-    { eager: true },
+    { eager: true, onDelete: 'SET NULL' },
   )
   @JoinColumn()
   vehiculo?: Vehiculo

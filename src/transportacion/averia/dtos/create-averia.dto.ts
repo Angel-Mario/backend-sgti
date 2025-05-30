@@ -6,6 +6,7 @@ export class CreateAveriaDto {
   complejidad: string
 
   @IsString()
+  @IsNotEmpty()
   descripcion: string
 
   @IsString()

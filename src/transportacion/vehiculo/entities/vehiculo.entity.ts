@@ -8,18 +8,18 @@ export class Vehiculo {
   @Column('text', { nullable: false, unique: true })
   matricula: string
 
-  @Column('numeric')
+  @Column('float', { nullable: true })
   consumo: number
 
-  @Column('numeric')
+  @Column('integer', { nullable: true })
   capacidad: number
 
-  @Column('text', { nullable: true })
+  @Column('text', { nullable: false })
   marca: string
 
   @Column('text', { nullable: true })
   modelo: string
 
-  @Column('numeric', { nullable: true })
+  @Column('integer', { nullable: true })
   año: number
 }

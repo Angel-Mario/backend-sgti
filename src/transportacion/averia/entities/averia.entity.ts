@@ -3,7 +3,7 @@ import {
   Column,
   Entity,
   JoinColumn,
-  OneToOne,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm'
 
@@ -24,7 +24,7 @@ export class Averia {
   @Column('text', { nullable: true })
   piezas_necesarias?: string
 
-  @OneToOne(
+  @ManyToOne(
     () => Vehiculo,
     (vehiculo) => vehiculo.id,
     { eager: true },

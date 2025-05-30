@@ -8,13 +8,13 @@ import {
   Post,
   Query,
 } from '@nestjs/common'
-import { SolicitudPiezaService } from './solicitud-pieza.service'
 import { Auth } from 'src/auth/decorators'
-import { UserId } from 'src/common/decorators/user-id.decorator'
 import { ValidRoles } from 'src/auth/interfaces/valid-roles'
+import { UserId } from 'src/common/decorators/user-id.decorator'
+import { DeleteManyDto } from 'src/common/dtos/delete-many.dto'
 import { CreateSolicitudPiezaDto } from './dtos/create-solicitud-pieza.dto'
 import { PaginationSolicitudPiezaDto } from './dtos/pagination-solicitud-pieza.dto'
-import { DeleteManyDto } from 'src/common/dtos/delete-many.dto'
+import { SolicitudPiezaService } from './solicitud-pieza.service'
 
 @Controller('vehicular/solicitudes-piezas')
 export class SolicitudPiezaController {
@@ -23,6 +23,7 @@ export class SolicitudPiezaController {
   @Get('load-solicitud-pieza-form-data')
   @Auth(ValidRoles.chofer)
   loadSolicitudPiezaFormData(@UserId() id: string) {
+    console.log('EL id es', id)
     return this.solicitudPiezaService.loadSolicitudPiezaPage(id)
   }
 

@@ -1,3 +1,4 @@
+import { terminales } from './../../seed/data/constants/terminales';
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { PaginationPuntoRefDto } from './dto/pagination-punto-ref.dto'
 import { CreatePuntoRefDto } from './dto/create-punto-ref.dto'
@@ -7,6 +8,8 @@ import { PuntoRef } from './entities/punto-ref.entity'
 import { In, Repository } from 'typeorm'
 import handleDBErrors from 'src/common/handlers/handleDBErrors'
 import { Ruta } from '../ruta/entities/ruta.entity'
+import { Terminal } from '../terminal/entities/terminal.entity';
+import { PuntoCombustible } from '../punto-comb/entities/punto-comb.entity';
 
 @Injectable()
 export class PuntoRefService {
@@ -32,6 +35,18 @@ export class PuntoRefService {
         Ruta, // La entidad que queremos unir (Ruta)
         'ruta', // Alias para la entidad Ruta en la consulta
         'ruta.puntoSalida = puntoRef.id OR ruta.puntoRegreso = puntoRef.id', // Condición de join
+      )
+      .leftJoinAndMapMany(
+        'puntoRef.terminales',
+        Terminal,
+        'terminal',
+        'terminal.puntoRef = puntoRef.id',
+      ).
+      leftJoinAndMapMany(
+        'puntoRef.puntos_combustible',
+        PuntoCombustible,
+        'puntoComb',
+        'puntoComb.puntoRef = puntoRef.id',
       )
       // .select(['puntoRef', 'ruta.nombre'])
       .skip((page - 1) * pageSize)
@@ -61,14 +76,18 @@ export class PuntoRefService {
           nombre: string
           latLong: string
           rutas: Ruta[]
+          terminales: Terminal []
+          puntos_combustible: PuntoCombustible []
         }) => {
           return {
             ...punto,
             rutas: undefined,
+            terminales: undefined,
+            puntos_combustible: undefined,
             usage: {
               rutas: punto.rutas.map((ruta) => ruta.nombre),
-              terminales: [],
-              puntos_combustible: [],
+              terminales: punto.terminales.map((terminal) => terminal.nombre),
+              puntos_combustible: punto.puntos_combustible.map((punto_comb) => punto_comb.nombre),
             },
           }
         },
@@ -82,10 +101,10 @@ export class PuntoRefService {
       select: {
         nombre: true,
         latLong: false,
-        id: true,
+        id: false,
       },
     })
-    return nombres
+    return nombres.map((obj) => obj.nombre)
   }
 
   async update(id: number, updatePuntoRefDto: UpdatePuntoRefDto) {

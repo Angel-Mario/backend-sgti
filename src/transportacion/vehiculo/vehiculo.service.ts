@@ -70,7 +70,13 @@ export class VehiculoService {
   async update(id: string, updatevehiculoDto: UpdateVehiculoDto) {
     const vehiculo = await this.findOne(id)
     try {
-      Object.assign(vehiculo, updatevehiculoDto)
+      Object.assign(vehiculo, {
+        año: null,
+        modelo: null,
+        capacidad: null,
+        consumo: null,
+        ...updatevehiculoDto,
+      })
       return await this.vehiculoRepository.save(vehiculo)
     } catch (error) {
       handleDBErrors(error)

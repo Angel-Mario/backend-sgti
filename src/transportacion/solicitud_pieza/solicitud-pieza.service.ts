@@ -16,7 +16,7 @@ import { CreateSolicitudPiezaDto } from './dtos/create-solicitud-pieza.dto'
 @Injectable()
 export class SolicitudPiezaService {
   constructor(
-    @InjectRepository(SolicitudPiezaService)
+    @InjectRepository(SolicitudPieza)
     private readonly solicitudPiezaRepository: Repository<SolicitudPieza>,
     private readonly choferService: ChoferService,
   ) {}
@@ -41,25 +41,27 @@ export class SolicitudPiezaService {
 
     let query = this.solicitudPiezaRepository
       .createQueryBuilder('solicitudPieza')
-      .leftJoinAndSelect('solicitudPieza.vehiculo', 'vehiculo')
+      .leftJoinAndSelect('solicitudPieza.chofer', 'chofer')
+      .leftJoinAndSelect('chofer.vehiculo', 'vehiculo')
+      .leftJoinAndSelect('chofer.user', 'user')
       .skip((page - 1) * pageSize)
       .take(pageSize)
-      .orderBy(
-        ['id', 'vehiculo'].includes(sorting)
-          ? `solicitudPieza.${sorting || 'id'}`
-          : `vehiculo.${sorting || 'id'}`,
-        `${order.toLocaleLowerCase() === 'asc' ? 'ASC' : 'DESC'}`,
-      )
-    if (search !== '' && column !== '') {
-      query = query.where(
-        ['id', 'vehiculo'].includes(column)
-          ? `CAST(solicitudPieza.${column} AS TEXT) ILIKE(:search)`
-          : `CAST(vehiculo.${column} AS TEXT) ILIKE(:search)`,
-        {
-          search: `%${search}%`,
-        },
-      )
-    }
+    // .orderBy(
+    //   ['id', 'vehiculo'].includes(sorting)
+    //     ? `solicitudPieza.${sorting || 'id'}`
+    //     : `vehiculo.${sorting || 'id'}`,
+    //   `${order.toLocaleLowerCase() === 'asc' ? 'ASC' : 'DESC'}`,
+    // )
+    // if (search !== '' && column !== '') {
+    //   query = query.where(
+    //     ['id', 'vehiculo'].includes(column)
+    //       ? `CAST(solicitudPieza.${column} AS TEXT) ILIKE(:search)`
+    //       : `CAST(vehiculo.${column} AS TEXT) ILIKE(:search)`,
+    //     {
+    //       search: `%${search}%`,
+    //     },
+    //   )
+    // }
     const data = await query.getManyAndCount()
     return {
       data: data[0],

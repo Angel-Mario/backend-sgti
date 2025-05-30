@@ -1,4 +1,3 @@
-import { ChoferService } from './../../personal/chofer/chofer.service'
 import {
   BadRequestException,
   Injectable,
@@ -7,9 +6,10 @@ import {
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { In, Repository } from 'typeorm'
-import { Averia } from './entities/averia.entity'
+import { ChoferService } from './../../personal/chofer/chofer.service'
 import { CreateAveriaDto } from './dtos/create-averia.dto'
 import { PaginationAveriaDto } from './dtos/pagination-averia.dto'
+import { Averia } from './entities/averia.entity'
 
 @Injectable()
 export class AveriaService {
@@ -23,6 +23,7 @@ export class AveriaService {
     chofer.ruta = undefined
     chofer.residencia = undefined
     chofer.user = undefined
+    if (!chofer.vehiculo) return { chofer, averias: [] }
     const averias = await this.findAllByVehiculo(chofer.vehiculo.id)
     return { chofer, averias }
   }

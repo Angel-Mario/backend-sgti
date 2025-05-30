@@ -1,6 +1,13 @@
 import { Chofer } from 'src/personal/chofer/entities/chofer.entity'
-import { Column, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm'
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm'
 
+@Entity('solicitud_pieza')
 export class SolicitudPieza {
   @PrimaryGeneratedColumn('uuid')
   id: string
@@ -8,13 +15,13 @@ export class SolicitudPieza {
   @Column('text', { nullable: false })
   tipo: string
 
-  @Column('numeric', { nullable: false })
+  @Column('integer', { nullable: false })
   cantidad: number
 
   @Column('text', { nullable: true, default: 'pendiente' })
   estado: string
 
-  @OneToOne(
+  @ManyToOne(
     () => Chofer,
     (chofer) => chofer.id,
   )

@@ -4,7 +4,5 @@ import { ValidRoles } from 'src/auth/interfaces/valid-roles'
 
 export const AuthAllRoles = () =>
   applyDecorators(
-    Auth(ValidRoles.admin),
-    Auth(ValidRoles.suministrador),
-    Auth(ValidRoles.chofer),
+    Auth(ValidRoles.admin, ValidRoles.suministrador, ValidRoles.chofer),
   )

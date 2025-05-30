@@ -1,7 +1,8 @@
-import { IsNotEmpty, IsPositive } from 'class-validator'
+import { IsNotEmpty, IsPositive, IsString } from 'class-validator'
 
 export class CreateSolicitudPiezaDto {
   @IsNotEmpty()
+  @IsString()
   tipo: string
 
   @IsPositive()

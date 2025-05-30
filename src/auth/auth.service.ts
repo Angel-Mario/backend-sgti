@@ -1,17 +1,13 @@
-import {
-  BadRequestException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common'
+import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { InjectRepository } from '@nestjs/typeorm'
 import * as bcrypt from 'bcrypt'
+import handleDBErrors from 'src/common/handlers/handleDBErrors'
 import { Repository } from 'typeorm'
 import { LoginUserDto } from './dto/login-user.dto'
+import { UpdateProfileDto } from './dto/update-profile.dto'
 import { User } from './entities/user.entity'
 import { JwtPayload } from './interfaces/jwt-payload.interface'
-import { UpdateProfileDto } from './dto/update-profile.dto'
-import handleDBErrors from 'src/common/handlers/handleDBErrors'
 
 @Injectable()
 export class AuthService {
@@ -35,43 +31,33 @@ export class AuthService {
   }
 
   async login(loginUserDto: LoginUserDto) {
-    try {
-      const { password, nombre_u } = loginUserDto
+    const { password, nombre_u } = loginUserDto
 
-      const user = await this.userRepository.findOne({
-        where: { nombre_u: nombre_u },
-        select: {
-          password: true,
-          nombre_u: true,
-          fullName: true,
-          id: true,
-          roles: true,
-          carnet: true,
-          correo: true,
-          telefono: true,
-        },
-      })
+    const user = await this.userRepository.findOne({
+      where: { nombre_u: nombre_u },
+      select: {
+        password: true,
+        nombre_u: true,
+        fullName: true,
+        id: true,
+        roles: true,
+        carnet: true,
+        correo: true,
+        telefono: true,
+      },
+    })
 
-      if (!user)
-        throw new UnauthorizedException('credentials are not valid (nombre_u)')
+    if (!user)
+      throw new UnauthorizedException('Credenciales inválidos (usuario)')
 
-      if (!bcrypt.compareSync(password, user.password))
-        throw new UnauthorizedException('credentials are not valid (password)')
+    if (!bcrypt.compareSync(password, user.password))
+      throw new UnauthorizedException('Credenciales inválidos (contraseña)')
 
-      user.password = undefined
-      return { user: { ...user }, token: this.getJwtToken({ id: user.id }) }
-    } catch (error) {
-      this.handelDBErrors(error)
-    }
+    user.password = undefined
+    return { user: { ...user }, token: this.getJwtToken({ id: user.id }) }
   }
   private getJwtToken(payload: JwtPayload) {
     const token = this.jwtService.sign(payload)
     return token
-  }
-
-  private handelDBErrors(error): never {
-    if (error.code === 23505) throw new BadRequestException(error.detail)
-
-    throw error
   }
 }

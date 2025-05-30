@@ -5,25 +5,26 @@ import {
   IsLowercase,
   IsOptional,
   IsString,
+  Length,
   Matches,
   MaxLength,
   Min,
   MinLength,
-} from 'class-validator';
-import { ValidRoles } from 'src/auth/interfaces/valid-roles';
+} from 'class-validator'
+import { ValidRoles } from 'src/auth/interfaces/valid-roles'
 
 export class CreateUserDto {
   @Min(10000000000)
-  carnet: number;
+  carnet: number
 
   @IsString()
   @MinLength(5)
-  fullName: string;
+  fullName: string
 
   @IsString()
   @MinLength(4)
   @IsLowercase()
-  nombre_u: string;
+  nombre_u: string
 
   @IsString()
   @MinLength(6)
@@ -32,19 +33,19 @@ export class CreateUserDto {
     message:
       'The password must have a Uppercase, lowercase letter and a number',
   })
-  password: string;
+  password: string
 
   @IsString()
   @IsEmail()
-  correo: string;
+  correo: string
 
-  @MinLength(8)
+  @Length(8, 8)
   @IsString()
   @IsOptional()
-  telefono?: string;
+  telefono?: string
 
   @IsOptional()
   @IsArray()
   @IsEnum(ValidRoles, { each: true })
-  roles?: string[];
+  roles?: string[]
 }
