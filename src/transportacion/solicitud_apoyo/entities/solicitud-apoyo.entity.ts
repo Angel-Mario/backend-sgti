@@ -1,4 +1,4 @@
-import { Vehiculo } from 'src/transportacion/vehiculo/entities/vehiculo.entity'
+import { Chofer } from 'src/personal/chofer/entities/chofer.entity'
 import {
   Column,
   Entity,
@@ -8,27 +8,24 @@ import {
 } from 'typeorm'
 
 @Entity('solicitud_apoyo')
-export class Averia {
+export class SolicitudApoyo {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column('text')
-  complejidad: string
+  @Column('date')
+  fecha: Date
 
   @Column('text')
   descripcion: string
 
-  @Column('text', { nullable: true })
-  tipo?: string
-
-  @Column('text', { nullable: true })
-  piezas_necesarias?: string
+  @Column('text', { nullable: false })
+  latLong: string
 
   @OneToOne(
-    () => Vehiculo,
-    (vehiculo) => vehiculo.id,
+    () => Chofer,
+    (chofer) => chofer.id,
     { eager: true },
   )
   @JoinColumn()
-  vehiculo: Vehiculo
+  chofer: Chofer
 }

@@ -1,11 +1,22 @@
 import { Module } from '@nestjs/common'
-import { VehiculoModule } from './vehiculo/vehiculo.module'
 import { AveriaModule } from './averia/averia.module'
+import { SolicitudApoyoModule } from './solicitud_apoyo/solicitud-apoyo.module'
 import { SolicitudPiezaModule } from './solicitud_pieza/solicitud-pieza.module'
+import { VehiculoModule } from './vehiculo/vehiculo.module'
 
 @Module({
-  imports: [VehiculoModule, AveriaModule, SolicitudPiezaModule],
-  exports: [VehiculoModule, AveriaModule, SolicitudPiezaModule],
+  imports: [
+    VehiculoModule,
+    AveriaModule,
+    SolicitudPiezaModule,
+    SolicitudApoyoModule,
+  ],
+  exports: [
+    VehiculoModule,
+    AveriaModule,
+    SolicitudPiezaModule,
+    SolicitudApoyoModule,
+  ],
   controllers: [],
   providers: [],
 })

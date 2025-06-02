@@ -24,6 +24,7 @@ export class SolicitudPieza {
   @ManyToOne(
     () => Chofer,
     (chofer) => chofer.id,
+    { eager: true },
   )
   @JoinColumn()
   chofer: Chofer

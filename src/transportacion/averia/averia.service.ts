@@ -99,17 +99,24 @@ export class AveriaService {
     return 'Averia eliminada correctamente'
   }
 
-  async removeMany(ids: string[]) {
-    const deleteResult = await this.averiaRepository.delete({ id: In(ids) })
-    if (deleteResult.affected === 0) {
-      throw new NotFoundException(
-        'No se encontraron averias con los ids proporcionados',
-      )
-    }
-    if (deleteResult.affected !== ids.length) {
-      throw new NotFoundException(
-        'No se pudieron eliminar todos los averias seleccionados',
-      )
+  async removeMany(ids: string[], userId: string) {
+    const chofer = await this.choferService.findOneByUserId(userId)
+    if (chofer) {
+      for (const id of ids) {
+        this.removeOne(userId, id)
+      }
+    } else {
+      const deleteResult = await this.averiaRepository.delete({ id: In(ids) })
+      if (deleteResult.affected === 0) {
+        throw new NotFoundException(
+          'No se encontraron averias con los ids proporcionados',
+        )
+      }
+      if (deleteResult.affected !== ids.length) {
+        throw new NotFoundException(
+          'No se pudieron eliminar todos los averias seleccionados',
+        )
+      }
     }
   }
 }

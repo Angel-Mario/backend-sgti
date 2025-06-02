@@ -35,11 +35,6 @@ export class AveriaController {
   findAll(@Query() paginationDto: PaginationAveriaDto) {
     return this.averiaService.findAll(paginationDto)
   }
-  @Delete()
-  @Auth(ValidRoles.admin)
-  removeMany(@Body() deleteManyDto: DeleteManyDto) {
-    return this.averiaService.removeMany(deleteManyDto.ids)
-  }
   @Delete(':id')
   @Auth(ValidRoles.chofer)
   removeOne(
@@ -47,5 +42,11 @@ export class AveriaController {
     @UserId() userId: string,
   ) {
     return this.averiaService.removeOne(userId, averiaId)
+  }
+
+  @Delete()
+  @Auth(ValidRoles.admin, ValidRoles.chofer)
+  removeMany(@Body() deleteManyDto: DeleteManyDto, @UserId() userId: string) {
+    return this.averiaService.removeMany(deleteManyDto.ids, userId)
   }
 }

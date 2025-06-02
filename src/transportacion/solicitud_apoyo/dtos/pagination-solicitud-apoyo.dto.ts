@@ -10,7 +10,7 @@ const COLUMNS_NAME = [
   'vehiculo.matricula',
 ]
 
-export class PaginationAveriaDto {
+export class PaginationSolicitudApoyoDto {
   @IsOptional()
   @IsEnum(['asc', 'desc'], { message: 'Order must be asc or desc' })
   order?: string

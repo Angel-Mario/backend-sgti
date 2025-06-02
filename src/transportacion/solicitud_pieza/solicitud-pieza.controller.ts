@@ -23,7 +23,6 @@ export class SolicitudPiezaController {
   @Get('load-solicitud-pieza-form-data')
   @Auth(ValidRoles.chofer)
   loadSolicitudPiezaFormData(@UserId() id: string) {
-    console.log('EL id es', id)
     return this.solicitudPiezaService.loadSolicitudPiezaPage(id)
   }
 
@@ -52,8 +51,8 @@ export class SolicitudPiezaController {
   }
 
   @Delete()
-  @Auth(ValidRoles.admin)
-  removeMany(@Body() deleteManyDto: DeleteManyDto) {
-    return this.solicitudPiezaService.removeMany(deleteManyDto.ids)
+  @Auth(ValidRoles.admin, ValidRoles.chofer)
+  removeMany(@Body() deleteManyDto: DeleteManyDto, @UserId() userId: string) {
+    return this.solicitudPiezaService.removeMany(deleteManyDto.ids, userId)
   }
 }

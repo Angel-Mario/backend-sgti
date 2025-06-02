@@ -5,13 +5,13 @@ import {
   UnauthorizedException,
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { SolicitudPieza } from './entities/solicitud-pieza.entity'
-import { In, Repository } from 'typeorm'
+import handleDBErrors from 'src/common/handlers/handleDBErrors'
 import { ChoferService } from 'src/personal/chofer/chofer.service'
+import { In, Repository } from 'typeorm'
+import { CreateSolicitudPiezaDto } from './dtos/create-solicitud-pieza.dto'
 import { PaginationSolicitudPiezaDto } from './dtos/pagination-solicitud-pieza.dto'
 import { UpdateSolicitudPiezaDto } from './dtos/update-solictud-pieza.dto'
-import handleDBErrors from 'src/common/handlers/handleDBErrors'
-import { CreateSolicitudPiezaDto } from './dtos/create-solicitud-pieza.dto'
+import { SolicitudPieza } from './entities/solicitud-pieza.entity'
 
 @Injectable()
 export class SolicitudPiezaService {
@@ -22,11 +22,17 @@ export class SolicitudPiezaService {
   ) {}
   async loadSolicitudPiezaPage(userId: string) {
     const chofer = await this.choferService.findOneByUserId(userId)
-    const solicitudes = this.solicitudPiezaRepository.findBy({
+
+    const solicitudes = await this.solicitudPiezaRepository.findBy({
       chofer: { id: chofer.id },
     })
 
-    return solicitudes
+    return solicitudes.map((solicitud) => ({
+      estado: solicitud.estado,
+      id: solicitud.id,
+      pieza: solicitud.cantidad,
+      tipo: solicitud.tipo,
+    }))
   }
 
   async findAll(paginationDto: PaginationSolicitudPiezaDto) {
@@ -39,7 +45,7 @@ export class SolicitudPiezaService {
       column = '',
     } = paginationDto
 
-    let query = this.solicitudPiezaRepository
+    const query = this.solicitudPiezaRepository
       .createQueryBuilder('solicitudPieza')
       .leftJoinAndSelect('solicitudPieza.chofer', 'chofer')
       .leftJoinAndSelect('chofer.vehiculo', 'vehiculo')
@@ -115,19 +121,26 @@ export class SolicitudPiezaService {
     await this.solicitudPiezaRepository.delete({ id: solicitudPiezaId })
     return 'Solicitud de pieza eliminada correctamente'
   }
-  async removeMany(ids: string[]) {
-    const deleteResult = await this.solicitudPiezaRepository.delete({
-      id: In(ids),
-    })
-    if (deleteResult.affected === 0) {
-      throw new NotFoundException(
-        'No se encontraron solicitudes de piezas con los ids proporcionados',
-      )
-    }
-    if (deleteResult.affected !== ids.length) {
-      throw new NotFoundException(
-        'No se pudieron eliminar todos los solicitudes de piezas seleccionados',
-      )
+  async removeMany(ids: string[], userId: string) {
+    const chofer = await this.choferService.findOneByUserId(userId)
+    if (chofer) {
+      for (const id of ids) {
+        this.removeOne(userId, id)
+      }
+    } else {
+      const deleteResult = await this.solicitudPiezaRepository.delete({
+        id: In(ids),
+      })
+      if (deleteResult.affected === 0) {
+        throw new NotFoundException(
+          'No se encontraron solicitudes de piezas con los ids proporcionados',
+        )
+      }
+      if (deleteResult.affected !== ids.length) {
+        throw new NotFoundException(
+          'No se pudieron eliminar todos los solicitudes de piezas seleccionados',
+        )
+      }
     }
   }
 }
