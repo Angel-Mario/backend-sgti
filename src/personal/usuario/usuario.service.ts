@@ -7,10 +7,10 @@ import { PaginationUsuarioDto } from './dtos/pagination-usuario.dto'
 
 import * as bcrypt from 'bcrypt'
 import handleDBErrors from 'src/common/handlers/handleDBErrors'
+import { ChoferService } from '../chofer/chofer.service'
 import { SuministradorService } from '../suministrador/suministrador.service'
 import { CreateUserDto } from './dtos/create-user.dto'
 import { UpdateUserDto } from './dtos/update-user.dto'
-import { ChoferService } from '../chofer/chofer.service'
 
 @Injectable()
 export class UsuarioService {
@@ -35,7 +35,7 @@ export class UsuarioService {
       .skip(pageSize * (page - 1))
       .take(pageSize)
       .orderBy(
-        `user.${sorting || 'id'}`,
+        `user.${sorting}`,
         `${order.toLocaleLowerCase() === 'asc' ? 'ASC' : 'DESC'}`,
       )
 

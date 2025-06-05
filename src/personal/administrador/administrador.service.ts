@@ -21,6 +21,14 @@ export class AdministradorService {
     private dataSource: DataSource,
   ) {}
 
+  async findOneByUserId(userId: string) {
+    const admin = await this.adminRepository.findOneBy({
+      user: { id: userId },
+    })
+    if (!admin) throw new NotFoundException('Administrador no encontrado')
+    return admin
+  }
+
   async findOne(id: string) {
     const admin = await this.adminRepository.findOneBy({ id })
     if (!admin) throw new NotFoundException('Administrador no encontrado')

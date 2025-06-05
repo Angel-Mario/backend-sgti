@@ -8,6 +8,7 @@ import { CreateVehiculoDto } from './dtos/create-vehiculo.dto'
 import { PaginationVehiculoDto } from './dtos/pagination-vehiculo.dto'
 import { UpdateVehiculoDto } from './dtos/update-vehiculo.dto'
 import { Vehiculo } from './entities/vehiculo.entity'
+import { SolicitudRefuerzo } from 'src/gestion/solicitud-refuerzo/entities/SolicitudRefuerzo.entity'
 
 @Injectable()
 export class VehiculoService {
@@ -15,6 +16,29 @@ export class VehiculoService {
     @InjectRepository(Vehiculo)
     private readonly vehiculoRepository: Repository<Vehiculo>,
   ) {}
+
+  async findVehiculosWithoutReinforcements(): Promise<
+    {
+      id: string
+      matricula: string
+      consumo: number
+      capacidad: number
+      marca: string
+      modelo: null | string
+      año: number | null
+    }[]
+  > {
+    const vehiculos = await this.vehiculoRepository
+      .createQueryBuilder('vehiculo')
+      .leftJoin(
+        SolicitudRefuerzo,
+        'solicitud_refuerzo',
+        'solicitud_refuerzo.vehiculo = vehiculo.id',
+      )
+      .where('solicitud_refuerzo.id IS NULL')
+      .getMany()
+    return vehiculos
+  }
 
   async findAll(paginationDto: PaginationVehiculoDto) {
     const {

@@ -1,3 +1,4 @@
+import { SolicitudRefuerzo } from './../../gestion/solicitud-refuerzo/entities/SolicitudRefuerzo.entity'
 import { PuntoRefService } from 'src/geografico/punto-ref/punto-ref.service'
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -25,6 +26,21 @@ export class TerminalService {
     })
     return nombres.map((terminal) => terminal.nombre)
   }
+  async findTerminalesWithoutReinforcements(): Promise<
+    { id: number; nombre: string }[]
+  > {
+    const terminales = await this.terminalRepository
+      .createQueryBuilder('terminal')
+      .leftJoin(
+        SolicitudRefuerzo,
+        'solicitud_refuerzo',
+        'solicitud_refuerzo.terminal = terminal.id',
+      )
+      .where('solicitud_refuerzo.id IS NULL')
+      .getMany()
+    return terminales
+  }
+
   async findAll(paginationDto: PaginationTerminalDto) {
     const {
       page = 1,
@@ -68,6 +84,12 @@ export class TerminalService {
     if (!terminal) throw new NotFoundException('Terminal no encontrada')
     return terminal
   }
+  async findOneByName(nombre: string) {
+    const terminal = await this.terminalRepository.findOneBy({ nombre })
+    if (!terminal) throw new NotFoundException('Terminal no encontrado')
+    return terminal
+  }
+
   async create(createTerminalDto: CreateTerminalDto) {
     try {
       const puntoRef = await this.puntoRefService.findOneByName(

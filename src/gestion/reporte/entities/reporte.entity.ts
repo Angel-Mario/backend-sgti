@@ -3,7 +3,7 @@ import {
   Column,
   Entity,
   JoinColumn,
-  OneToOne,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm'
 
@@ -16,12 +16,15 @@ export class Reporte {
   fecha: Date
 
   @Column('text')
-  descripcion: string
+  asunto: string
 
-  @OneToOne(
+  @Column('text')
+  texto: string
+
+  @ManyToOne(
     () => Admin,
     (admin) => admin.id,
-    { eager: true },
+    { eager: false },
   )
   @JoinColumn()
   administrador: Admin

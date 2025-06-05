@@ -1,10 +1,10 @@
-import { AdministradorService } from './../../personal/administrador/administrador.service'
 import { Injectable } from '@nestjs/common'
-import { PaginationReporteDto } from './dtos/pagination-reporte.dto'
-import { In, Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Reporte } from './entities/reporte.entity'
+import { Repository } from 'typeorm'
+import { AdministradorService } from './../../personal/administrador/administrador.service'
 import { CreateReporteDto } from './dtos/create-reporte.dto'
+import { PaginationReporteDto } from './dtos/pagination-reporte.dto'
+import { Reporte } from './entities/reporte.entity'
 
 @Injectable()
 export class ReporteService {
@@ -19,17 +19,37 @@ export class ReporteService {
       page = 1,
       pageSize = +process.env.DEFAULT_PAGE_SIZE,
       order = process.env.DEFAULT_ORDER,
-      sorting = 'id',
+      sorting = 'fecha',
       search = '',
       column = '',
     } = paginationDto
 
-    return await this.reporteRepository.find()
+    const query = this.reporteRepository
+      .createQueryBuilder('reporte')
+      .skip(pageSize * (page - 1))
+      .take(pageSize)
+      .orderBy(
+        `reporte.${sorting}`,
+        `${order.toLocaleLowerCase() === 'asc' ? 'ASC' : 'DESC'}`,
+      )
+    if (search !== '' && column !== '') {
+      query.where(`CAST(reporte.${column} AS TEXT) ILIKE(:search)`, {
+        search: `%${search}%`,
+      })
+    }
+
+    const data = await query.getManyAndCount()
+
+    return {
+      data: data[0],
+      count: data[1],
+      pages: Math.ceil(data[1] / pageSize),
+    }
   }
 
   async create(id: string, createReporteDto: CreateReporteDto) {
     const reporte = this.reporteRepository.create(createReporteDto)
-    reporte.administrador = await this.administradorService.findOne(id)
+    reporte.administrador = await this.administradorService.findOneByUserId(id)
     reporte.fecha = new Date()
 
     return this.reporteRepository.save(reporte)
