@@ -1,4 +1,4 @@
-import { SolicitudRefuerzo } from './../../gestion/solicitud-refuerzo/entities/SolicitudRefuerzo.entity'
+import { SolicitudRefuerzo } from '../../gestion/solicitud-refuerzo/entities/solicitud-refuerzo.entity'
 import { PuntoRefService } from 'src/geografico/punto-ref/punto-ref.service'
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'

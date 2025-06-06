@@ -35,11 +35,12 @@ export class SolicitudApoyoController {
     return this.solicitudApoyoService.create(id, solicitudApoyoDto)
   }
   @Get()
-  // @Auth(ValidRoles.admin)
+  @Auth(ValidRoles.admin)
   findAll(@Query() paginationDto: PaginationSolicitudApoyoDto) {
     return this.solicitudApoyoService.findAll(paginationDto)
   }
 
+  @Auth(ValidRoles.admin)
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.solicitudApoyoService.findOne(id)

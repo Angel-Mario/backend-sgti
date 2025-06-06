@@ -1,28 +1,13 @@
-import { Admin } from 'src/personal/administrador/entities/administrador.entity'
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  OneToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm'
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity('combustible_asignado')
-export class Reporte {
+export class CombustibleAsignado {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column('integer')
-  cantidad: number
+  @Column('integer', { default: 0 })
+  cantidadL: number
 
-  @Column('date')
+  @Column('date', { nullable: false, unique: true })
   fecha: Date
-
-  @OneToOne(
-    () => Admin,
-    (admin) => admin.id,
-    { eager: true },
-  )
-  @JoinColumn()
-  administrador: Admin
 }

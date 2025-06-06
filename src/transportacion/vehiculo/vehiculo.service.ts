@@ -8,7 +8,7 @@ import { CreateVehiculoDto } from './dtos/create-vehiculo.dto'
 import { PaginationVehiculoDto } from './dtos/pagination-vehiculo.dto'
 import { UpdateVehiculoDto } from './dtos/update-vehiculo.dto'
 import { Vehiculo } from './entities/vehiculo.entity'
-import { SolicitudRefuerzo } from 'src/gestion/solicitud-refuerzo/entities/SolicitudRefuerzo.entity'
+import { SolicitudRefuerzo } from 'src/gestion/solicitud-refuerzo/entities/solicitud-refuerzo.entity'
 
 @Injectable()
 export class VehiculoService {

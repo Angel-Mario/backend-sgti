@@ -1,7 +1,9 @@
-import { IsNotEmpty, IsString } from 'class-validator'
+import { IsDate, IsPositive } from 'class-validator'
 
-export class CreateReporteDto {
-  @IsString()
-  @IsNotEmpty()
-  descripcion: string
+export class CreateCombustibleAsignadoDto {
+  @IsDate()
+  fecha: Date
+
+  @IsPositive()
+  cantidadL: number
 }

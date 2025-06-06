@@ -1,9 +1,9 @@
 import { Type } from 'class-transformer'
 import { IsEnum, IsOptional, Min } from 'class-validator'
 
-const COLUMNS_NAME = ['id', 'descripcion', 'fecha', 'administrador']
+const COLUMNS_NAME = ['id', 'estado', 'terminal']
 
-export class PaginationReporteDto {
+export class PaginationSolicitudRefuerzoDto {
   @IsOptional()
   @IsEnum(['asc', 'desc'], { message: 'Order must be asc or desc' })
   order?: string

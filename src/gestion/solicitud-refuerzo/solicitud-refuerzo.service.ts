@@ -1,12 +1,13 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { SolicitudRefuerzo } from './entities/SolicitudRefuerzo.entity'
-import { Repository } from 'typeorm'
+import { SolicitudRefuerzo } from './entities/solicitud-refuerzo.entity'
+import { In, Repository } from 'typeorm'
 import { VehiculoService } from 'src/transportacion/vehiculo/vehiculo.service'
 import { ChoferService } from 'src/personal/chofer/chofer.service'
 import { TerminalService } from 'src/geografico/terminal/terminal.service'
 import { CreateSolicitudRefuerzoDto } from './dtos/create-solicitud-refuerzo.dto'
 import handleDBErrors from 'src/common/handlers/handleDBErrors'
+import { PaginationSolicitudRefuerzoDto } from './dtos/pagination-solicitud-refuerzo.dto'
 
 @Injectable()
 export class SolicitudRefuerzoService {
@@ -27,6 +28,19 @@ export class SolicitudRefuerzoService {
 
     return { terminalesSinReinforcements, vehiculosSinReinforcements }
   }
+  async findAll(paginationDto: PaginationSolicitudRefuerzoDto) {
+    return await this.solicitudRefuerzoRepository.find()
+  }
+
+  async findOne(id: string) {
+    const solicitudRefuerzo = await this.solicitudRefuerzoRepository.findOneBy({
+      id,
+    })
+    if (!solicitudRefuerzo)
+      throw new NotFoundException('Solicitud de refuerzo no encontrada')
+    return solicitudRefuerzo
+  }
+
   async create(createSolicitudRefuerzoDto: CreateSolicitudRefuerzoDto) {
     const terminal = await this.terminalService.findOneByName(
       createSolicitudRefuerzoDto.terminalNombre,
@@ -50,5 +64,29 @@ export class SolicitudRefuerzoService {
     }
 
     return 'Solicitud de refuerzo creada correctamente'
+  }
+  async update(id, updateSolicitudRefuerzoDto: CreateSolicitudRefuerzoDto) {
+    const solicitudRefuerzo = await this.findOne(id)
+    try {
+      Object.assign(solicitudRefuerzo, updateSolicitudRefuerzoDto)
+    } catch (error) {
+      handleDBErrors(error)
+    }
+    await this.solicitudRefuerzoRepository.save(solicitudRefuerzo)
+    return 'Solicitud de refuerzo actualizada correctamente'
+  }
+
+  async removeMany(ids: string[]) {
+    const deleteResult = await this.solicitudRefuerzoRepository.delete({
+      id: In(ids),
+    })
+    if (deleteResult.affected === 0) {
+      throw new NotFoundException('No se encontraron solicitudes de refuerzo')
+    }
+    if (deleteResult.affected !== ids.length) {
+      throw new NotFoundException(
+        'No se encontraron todos los solicitudes de refuerzo',
+      )
+    }
   }
 }

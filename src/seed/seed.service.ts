@@ -1,3 +1,4 @@
+import { ReporteService } from './../gestion/reporte/reporte.service'
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from 'src/auth/entities/user.entity'
@@ -20,6 +21,11 @@ import { Averia } from 'src/transportacion/averia/entities/averia.entity'
 import { AveriaService } from 'src/transportacion/averia/averia.service'
 import { SolicitudPiezaService } from 'src/transportacion/solicitud_pieza/solicitud-pieza.service'
 import { SolicitudPieza } from 'src/transportacion/solicitud_pieza/entities/solicitud-pieza.entity'
+import { CombustibleAsignado } from 'src/gestion/combustible-asignado/entities/combustible-asignado.entity'
+import { CombustibleAsignadoService } from 'src/gestion/combustible-asignado/combustible-asignado.service'
+import { Reporte } from 'src/gestion/reporte/entities/reporte.entity'
+import { SolicitudApoyo } from 'src/transportacion/solicitud_apoyo/entities/solicitud-apoyo.entity'
+import { SolicitudApoyoService } from 'src/transportacion/solicitud_apoyo/solicitud-apoyo.service'
 
 @Injectable()
 export class SeedService {
@@ -48,6 +54,15 @@ export class SeedService {
     @InjectRepository(SolicitudPieza)
     private readonly solicitudPiezaRepository: Repository<SolicitudPieza>,
     private readonly solicitudPiezaService: SolicitudPiezaService,
+    @InjectRepository(CombustibleAsignado)
+    private readonly combustibleAsignadoRepository: Repository<CombustibleAsignado>,
+    private readonly combustibleAsignadoService: CombustibleAsignadoService,
+    @InjectRepository(Reporte)
+    private readonly reporteRepository: Repository<Reporte>,
+    private readonly reporteService: ReporteService,
+    @InjectRepository(SolicitudApoyo)
+    private readonly solicitudApoyoRepository: Repository<SolicitudApoyo>,
+    private readonly solicitudApoyoService: SolicitudApoyoService,
   ) {}
 
   async rundSeed() {
@@ -55,13 +70,14 @@ export class SeedService {
     await this.insertUsers()
 
     const _adminsIds = await this.insertAdmins()
-    console.log(_adminsIds)
+    // console.log(_adminsIds)
 
     await this.insertPuntosRef()
     await this.insertVehiculos()
     await this.insertRutas()
     await this.insertTerminales()
     await this.insertPuntosCombustibles()
+    await this.insertCombustiblesAsignados()
 
     const choferesUsersIds = await this.insertChoferes()
     console.log(choferesUsersIds)
@@ -73,26 +89,36 @@ export class SeedService {
     const queryBuilder0 = this.solicitudPiezaRepository.createQueryBuilder()
     await queryBuilder0.delete().where({}).execute()
 
-    const queryBuilder1 = this.userRepository.createQueryBuilder()
+    const queryBuilder1 = this.reporteRepository.createQueryBuilder()
     await queryBuilder1.delete().where({}).execute()
 
-    const queryBuilder2 = this.rutaRepository.createQueryBuilder()
+    const queryBuilder2 = this.solicitudApoyoRepository.createQueryBuilder()
     await queryBuilder2.delete().where({}).execute()
 
-    const queryBuilder3 = this.terminalRepository.createQueryBuilder()
+    const queryBuilder3 = this.userRepository.createQueryBuilder()
     await queryBuilder3.delete().where({}).execute()
 
-    const queryBuilder4 = this.puntoCombustibleRepository.createQueryBuilder()
+    const queryBuilder4 = this.rutaRepository.createQueryBuilder()
     await queryBuilder4.delete().where({}).execute()
 
-    const queryBuilder5 = this.puntoRefRepository.createQueryBuilder()
+    const queryBuilder5 = this.terminalRepository.createQueryBuilder()
     await queryBuilder5.delete().where({}).execute()
 
-    const queryBuilder6 = this.averiaRepository.createQueryBuilder()
+    const queryBuilder6 = this.puntoCombustibleRepository.createQueryBuilder()
     await queryBuilder6.delete().where({}).execute()
 
-    const queryBuilder7 = this.vehiculoRepository.createQueryBuilder()
+    const queryBuilder7 = this.puntoRefRepository.createQueryBuilder()
     await queryBuilder7.delete().where({}).execute()
+
+    const queryBuilder8 = this.averiaRepository.createQueryBuilder()
+    await queryBuilder8.delete().where({}).execute()
+
+    const queryBuilder9 = this.vehiculoRepository.createQueryBuilder()
+    await queryBuilder9.delete().where({}).execute()
+
+    const queryBuilder10 =
+      this.combustibleAsignadoRepository.createQueryBuilder()
+    await queryBuilder10.delete().where({}).execute()
   }
 
   private async insertUsers() {
@@ -172,5 +198,16 @@ export class SeedService {
     }
     await Promise.all(solicitudesPieza)
     return 'SOLICITUDES PIEZA INSERTED'
+  }
+  private async insertCombustiblesAsignados() {
+    const seedCombustiblesAsignados = initialData.combustibles_asignados
+    const combustiblesAsignados: Promise<string>[] = []
+    for (const combustibleAsignado of seedCombustiblesAsignados) {
+      combustiblesAsignados.push(
+        this.combustibleAsignadoService.create(combustibleAsignado),
+      )
+    }
+    await Promise.all(combustiblesAsignados)
+    return 'COMBUSTIBLES ASIGNADOS INSERTED'
   }
 }

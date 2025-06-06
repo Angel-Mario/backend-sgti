@@ -5,9 +5,16 @@ import { SeedController } from './seed.controller'
 import { Module } from '@nestjs/common'
 import { PersonalModule } from 'src/personal/personal.module'
 import { GeoModule } from 'src/geografico/geo.module'
+import { GestionModule } from 'src/gestion/gestion.module'
 
 @Module({
-  imports: [AuthModule, PersonalModule, GeoModule, TransportacionModule],
+  imports: [
+    AuthModule,
+    PersonalModule,
+    GeoModule,
+    TransportacionModule,
+    GestionModule,
+  ],
   controllers: [SeedController],
   providers: [SeedService],
 })
