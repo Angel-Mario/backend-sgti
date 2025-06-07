@@ -30,12 +30,13 @@ export class VehiculoService {
   > {
     const vehiculos = await this.vehiculoRepository
       .createQueryBuilder('vehiculo')
-      .leftJoin(
-        SolicitudRefuerzo,
-        'solicitud_refuerzo',
-        'solicitud_refuerzo.vehiculo = vehiculo.id',
+      .leftJoin('vehiculo.solicitud_refuerzo', 'solicitud_refuerzo')
+      .where(
+        'vehiculo.solicitud_refuerzo IS NULL OR solicitud_refuerzo.estado = (:search)',
+        {
+          search: `%rechazada%`,
+        },
       )
-      .where('solicitud_refuerzo.id IS NULL')
       .getMany()
     return vehiculos
   }

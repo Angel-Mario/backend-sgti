@@ -8,6 +8,8 @@ import { TerminalService } from 'src/geografico/terminal/terminal.service'
 import { CreateSolicitudRefuerzoDto } from './dtos/create-solicitud-refuerzo.dto'
 import handleDBErrors from 'src/common/handlers/handleDBErrors'
 import { PaginationSolicitudRefuerzoDto } from './dtos/pagination-solicitud-refuerzo.dto'
+import { Vehiculo } from 'src/transportacion/vehiculo/entities/vehiculo.entity'
+import { UpdateSolicitudRefuerzoDto } from './dtos/update-solicitud-refuerzo.dto'
 
 @Injectable()
 export class SolicitudRefuerzoService {
@@ -29,7 +31,59 @@ export class SolicitudRefuerzoService {
     return { terminalesSinReinforcements, vehiculosSinReinforcements }
   }
   async findAll(paginationDto: PaginationSolicitudRefuerzoDto) {
-    return await this.solicitudRefuerzoRepository.find()
+    const {
+      page = 1,
+      pageSize = +process.env.DEFAULT_PAGE_SIZE,
+      order = 'DESC',
+      sorting = 'fecha',
+      search = '',
+      column = '',
+    } = paginationDto
+
+    const query = this.solicitudRefuerzoRepository
+      .createQueryBuilder('solicitudRefuerzo')
+      .leftJoinAndSelect('solicitudRefuerzo.terminal', 'terminal')
+      .leftJoinAndMapMany(
+        'solicitudRefuerzo.vehiculos',
+        Vehiculo,
+        'vehiculo',
+        'vehiculo.solicitud_refuerzo=solicitudRefuerzo.id',
+      )
+      .skip((page - 1) * pageSize)
+      .take(pageSize)
+      .orderBy(
+        sorting === 'terminal'
+          ? 'terminal.nombre'
+          : `solicitudRefuerzo.${sorting}`,
+        `${order.toLocaleLowerCase() === 'asc' ? 'ASC' : 'DESC'}`,
+      )
+    if (search !== '' && column !== '') {
+      query.where(
+        column === 'terminal'
+          ? 'CAST(terminal.nombre AS TEXT) ILIKE(:search)'
+          : `CAST(solicitudRefuerzo.${column} AS TEXT) ILIKE(:search)`,
+        {
+          search: `%${search}%`,
+        },
+      )
+    }
+
+    const data = await query.getManyAndCount()
+
+    const newdata = []
+    for (const solicitud of data[0]) {
+      let sumaCapacidad = 0
+      for (const vehiculo of solicitud.vehiculos) {
+        sumaCapacidad += vehiculo.capacidad
+      }
+      newdata.push({ ...solicitud, capacidadTotal: sumaCapacidad })
+    }
+
+    return {
+      data: newdata,
+      count: data[1],
+      pages: Math.ceil(data[1] / pageSize),
+    }
   }
 
   async findOne(id: string) {
@@ -51,21 +105,23 @@ export class SolicitudRefuerzoService {
       }),
     )
     try {
-      for (const vehiculo of busquedaVehiculos) {
-        const solicitudRefuerzo = this.solicitudRefuerzoRepository.create({
-          vehiculo,
-          terminal,
-          estado: 'pendiente',
-        })
-        this.solicitudRefuerzoRepository.save(solicitudRefuerzo)
-      }
+      const solicitudRefuerzo = this.solicitudRefuerzoRepository.create({
+        vehiculos: busquedaVehiculos,
+        terminal,
+        estado: 'pendiente',
+        fecha: new Date(),
+      })
+      this.solicitudRefuerzoRepository.save(solicitudRefuerzo)
     } catch (error) {
       handleDBErrors(error)
     }
 
     return 'Solicitud de refuerzo creada correctamente'
   }
-  async update(id, updateSolicitudRefuerzoDto: CreateSolicitudRefuerzoDto) {
+  async update(
+    id: string,
+    updateSolicitudRefuerzoDto: UpdateSolicitudRefuerzoDto,
+  ) {
     const solicitudRefuerzo = await this.findOne(id)
     try {
       Object.assign(solicitudRefuerzo, updateSolicitudRefuerzoDto)

@@ -4,9 +4,10 @@ import {
   Column,
   Entity,
   JoinColumn,
-  OneToOne,
   ManyToOne,
   PrimaryGeneratedColumn,
+  OneToMany,
+  Relation,
 } from 'typeorm'
 
 @Entity('solicitud_refuerzo')
@@ -17,6 +18,9 @@ export class SolicitudRefuerzo {
   @Column('text', { nullable: true, default: 'pendiente' })
   estado: string
 
+  @Column('date', { nullable: false })
+  fecha: Date
+
   @ManyToOne(
     () => Terminal,
     (terminal) => terminal.id,
@@ -25,11 +29,10 @@ export class SolicitudRefuerzo {
   @JoinColumn()
   terminal: Terminal
 
-  @OneToOne(
+  @OneToMany(
     () => Vehiculo,
-    (vehiculo) => vehiculo.id,
-    { eager: true, onDelete: 'CASCADE' },
+    (vehiculo) => vehiculo.solicitud_refuerzo,
+    { eager: true, onDelete: 'SET NULL' },
   )
-  @JoinColumn()
-  vehiculo: Vehiculo
+  vehiculos: Relation<Vehiculo>[]
 }

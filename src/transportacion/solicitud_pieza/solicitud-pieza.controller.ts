@@ -14,6 +14,7 @@ import { UserId } from 'src/common/decorators/user-id.decorator'
 import { DeleteManyDto } from 'src/common/dtos/delete-many.dto'
 import { CreateSolicitudPiezaDto } from './dtos/create-solicitud-pieza.dto'
 import { PaginationSolicitudPiezaDto } from './dtos/pagination-solicitud-pieza.dto'
+import { UpdateSolicitudPiezaDto } from './dtos/update-solictud-pieza.dto'
 import { SolicitudPiezaService } from './solicitud-pieza.service'
 
 @Controller('vehicular/solicitudes-piezas')
@@ -35,8 +36,20 @@ export class SolicitudPiezaController {
     return this.solicitudPiezaService.create(id, solicitudPiezaDto)
   }
 
+  @Post(':id')
+  @Auth(ValidRoles.admin)
+  update(
+    @Param('id', ParseUUIDPipe) solicitudPiezaId: string,
+    @Body() solicitudPiezaDto: UpdateSolicitudPiezaDto,
+  ) {
+    return this.solicitudPiezaService.update(
+      solicitudPiezaId,
+      solicitudPiezaDto,
+    )
+  }
+
   @Get()
-  // @Auth(ValidRoles.admin)
+  @Auth(ValidRoles.admin)
   findAll(@Query() paginationDto: PaginationSolicitudPiezaDto) {
     return this.solicitudPiezaService.findAll(paginationDto)
   }

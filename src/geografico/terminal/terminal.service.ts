@@ -36,7 +36,12 @@ export class TerminalService {
         'solicitud_refuerzo',
         'solicitud_refuerzo.terminal = terminal.id',
       )
-      .where('solicitud_refuerzo.id IS NULL')
+      .where(
+        'solicitud_refuerzo.id IS NULL OR solicitud_refuerzo.estado = (:search)',
+        {
+          search: `%rechazada%`,
+        },
+      )
       .getMany()
     return terminales
   }

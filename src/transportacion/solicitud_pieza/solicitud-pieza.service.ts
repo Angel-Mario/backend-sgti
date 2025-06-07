@@ -30,7 +30,7 @@ export class SolicitudPiezaService {
     return solicitudes.map((solicitud) => ({
       estado: solicitud.estado,
       id: solicitud.id,
-      pieza: solicitud.cantidad,
+      cantidad: solicitud.cantidad,
       tipo: solicitud.tipo,
     }))
   }
@@ -40,7 +40,7 @@ export class SolicitudPiezaService {
       page = 1,
       pageSize = +process.env.DEFAULT_PAGE_SIZE,
       order = process.env.DEFAULT_ORDER,
-      sorting = 'id',
+      sorting = 'tipo',
       search = '',
       column = '',
     } = paginationDto
@@ -52,22 +52,22 @@ export class SolicitudPiezaService {
       .leftJoinAndSelect('chofer.user', 'user')
       .skip((page - 1) * pageSize)
       .take(pageSize)
-    // .orderBy(
-    //   ['id', 'vehiculo'].includes(sorting)
-    //     ? `solicitudPieza.${sorting || 'id'}`
-    //     : `vehiculo.${sorting || 'id'}`,
-    //   `${order.toLocaleLowerCase() === 'asc' ? 'ASC' : 'DESC'}`,
-    // )
-    // if (search !== '' && column !== '') {
-    //   query = query.where(
-    //     ['id', 'vehiculo'].includes(column)
-    //       ? `CAST(solicitudPieza.${column} AS TEXT) ILIKE(:search)`
-    //       : `CAST(vehiculo.${column} AS TEXT) ILIKE(:search)`,
-    //     {
-    //       search: `%${search}%`,
-    //     },
-    //   )
-    // }
+      .orderBy(
+        sorting === 'vehiculo'
+          ? `vehiculo.matricula`
+          : `solicitudPieza.${sorting}`,
+        `${order.toLocaleLowerCase() === 'asc' ? 'ASC' : 'DESC'}`,
+      )
+    if (search !== '' && column !== '') {
+      query.where(
+        column === 'vehiculo'
+          ? `CAST(vehiculo.matricula AS TEXT) ILIKE(:search)`
+          : `CAST(solicitudPieza.${column} AS TEXT) ILIKE(:search)`,
+        {
+          search: `%${search}%`,
+        },
+      )
+    }
     const data = await query.getManyAndCount()
     return {
       data: data[0],

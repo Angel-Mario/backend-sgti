@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer'
 import { IsEnum, IsOptional, Min } from 'class-validator'
 
-const COLUMNS_NAME = ['id', 'tipo', 'cantidad', 'chofer.nombre']
+const COLUMNS_NAME = ['id', 'tipo', 'cantidad', 'estado', 'vehiculo']
 
 export class PaginationSolicitudPiezaDto {
   @IsOptional()

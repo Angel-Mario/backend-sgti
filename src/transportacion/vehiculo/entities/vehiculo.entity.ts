@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import { SolicitudRefuerzo } from 'src/gestion/solicitud-refuerzo/entities/solicitud-refuerzo.entity'
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Relation,
+} from 'typeorm'
 
 @Entity('vehiculo')
 export class Vehiculo {
@@ -22,4 +29,11 @@ export class Vehiculo {
 
   @Column('integer', { nullable: true })
   año: number
+
+  @ManyToOne(
+    () => SolicitudRefuerzo,
+    (solicitudRefuerzo) => solicitudRefuerzo.vehiculos,
+    { eager: false, onDelete: 'SET NULL' },
+  )
+  solicitud_refuerzo: Relation<SolicitudRefuerzo>
 }
