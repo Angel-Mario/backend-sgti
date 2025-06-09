@@ -4,6 +4,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm'
@@ -16,11 +17,12 @@ export class CombustibleChofer {
   @Column('integer', { nullable: false })
   litros: number
 
-  @OneToOne(
+  @ManyToOne(
     () => PuntoCombustible,
     (puntoCombustible) => puntoCombustible.id,
     { eager: true },
   )
+  @JoinColumn()
   punto_combustible: PuntoCombustible
 
   @OneToOne(

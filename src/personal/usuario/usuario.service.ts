@@ -30,7 +30,7 @@ export class UsuarioService {
       column = '',
     } = paginationDto
 
-    let query = this.userRepository
+    const query = this.userRepository
       .createQueryBuilder('user')
       .skip(pageSize * (page - 1))
       .take(pageSize)
@@ -40,14 +40,14 @@ export class UsuarioService {
       )
 
     if (column === 'isActive' && search.toLocaleLowerCase() === 'inactivo') {
-      query = query.where(`user.${column} = :search`, { search: false })
+      query.where(`user.${column} = :search`, { search: false })
     } else if (
       column === 'isActive' &&
       search.toLocaleLowerCase() === 'activo'
     ) {
-      query = query.where(`user.${column} = :search`, { search: true })
+      query.where(`user.${column} = :search`, { search: true })
     } else if (search !== '' && column !== '') {
-      query = query.where(`CAST(user.${column} AS TEXT) ILIKE(:search)`, {
+      query.where(`CAST(user.${column} AS TEXT) ILIKE(:search)`, {
         search: `%${search}%`,
       })
     }
@@ -124,6 +124,7 @@ export class UsuarioService {
         'No se pudieron eliminar todos los usuarios seleccionados',
       )
     }
+    return 'Usuarios eliminados correctamente'
   }
   // Remove One Deprecated
   // async remove(id: string) {

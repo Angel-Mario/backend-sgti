@@ -5,6 +5,9 @@ export class Protocolo {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
+  @Column('text', { nullable: false, unique: true })
+  nombre: string
+
   @Column('text', { nullable: false })
   descripcion: string
 

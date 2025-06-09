@@ -11,6 +11,7 @@ import { CreateChoferDto } from './dtos/create-chofer.dto'
 import { PaginationChoferDto } from './dtos/pagination-chofer.dto'
 import { UpdateChoferDto } from './dtos/update-chofer.dto'
 import { Chofer } from './entities/chofer.entity'
+import { CombustibleChofer } from 'src/gestion/combustible-chofer/entities/combustible-chofer.entity'
 
 @Injectable()
 export class ChoferService {
@@ -90,6 +91,19 @@ export class ChoferService {
     const chofer = await this.findOneByUserId(id)
     return { ...chofer, user: undefined }
   }
+  async findUsersWithoutCombustible() {
+    const chofers = await this.choferRepository
+      .createQueryBuilder('chofer')
+      .leftJoinAndSelect('chofer.user', 'user')
+      .leftJoinAndSelect(
+        CombustibleChofer,
+        'combustible',
+        'combustible.chofer = chofer.id',
+      )
+      .where('combustible.id IS NULL')
+      .getMany()
+    return chofers.map((chofer) => chofer.user.nombre_u)
+  }
 
   async findOne(id: string) {
     const chofer = await this.choferRepository.findOneBy({ id })
@@ -99,6 +113,13 @@ export class ChoferService {
   async findOneByUserId(userId: string) {
     const chofer = await this.choferRepository.findOneBy({
       user: { id: userId },
+    })
+    if (!chofer) throw new NotFoundException('Chofer no encontrado')
+    return chofer
+  }
+  async findOneByUserName(nombre_u: string) {
+    const chofer = await this.choferRepository.findOneBy({
+      user: { nombre_u },
     })
     if (!chofer) throw new NotFoundException('Chofer no encontrado')
     return chofer

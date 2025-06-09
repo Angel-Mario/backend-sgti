@@ -27,15 +27,20 @@ export class UsuarioController {
   findAll(@Query() paginationDto: PaginationUsuarioDto) {
     return this.usuarioService.findAll(paginationDto)
   }
+
+  @Auth(ValidRoles.admin)
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.usuarioService.findOne(id)
   }
+
+  @Auth(ValidRoles.admin)
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.usuarioService.create(createUserDto)
   }
 
+  @Auth(ValidRoles.admin)
   @Post(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -49,6 +54,7 @@ export class UsuarioController {
   //   return this.usuarioService.remove(id);
   // }
 
+  @Auth(ValidRoles.admin)
   @Delete()
   removeMany(@Body() deleteManyDto: DeleteManyDto) {
     return this.usuarioService.removeMany(deleteManyDto.ids)

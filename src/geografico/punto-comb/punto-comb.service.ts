@@ -26,6 +26,15 @@ export class PuntoCombustibleService {
     })
     return nombres.map((puntosComb) => puntosComb.nombre)
   }
+  async findOneByName(nombre: string) {
+    const puntoComb = await this.puntoCombustibleRepository.findOneBy({
+      nombre,
+    })
+    if (!puntoComb)
+      throw new NotFoundException('Punto de Combustible no encontrado')
+    return puntoComb
+  }
+
   async findAll(paginationDto: PaginationPuntoCombustibleDto) {
     const {
       page = 1,

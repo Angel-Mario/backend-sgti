@@ -21,24 +21,31 @@ import { UserId } from 'src/common/decorators/user-id.decorator'
 export class ChoferController {
   constructor(private readonly choferService: ChoferService) {}
 
+  @Auth(ValidRoles.admin)
   @Get()
   findAll(@Query() paginationDto: PaginationChoferDto) {
     return this.choferService.findAll(paginationDto)
   }
+
   @Get('me')
   @Auth(ValidRoles.chofer)
   me(@UserId() id: string) {
     return this.choferService.me(id)
   }
 
+  @Auth(ValidRoles.admin)
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.choferService.findOne(id)
   }
+
+  @Auth(ValidRoles.admin)
   @Post()
   create(@Body() createChoferDto: CreateChoferDto) {
     return this.choferService.create(createChoferDto)
   }
+
+  @Auth(ValidRoles.admin)
   @Post(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -47,6 +54,7 @@ export class ChoferController {
     return this.choferService.update(id, updateChoferDto)
   }
 
+  @Auth(ValidRoles.admin)
   @Delete()
   removeMany(@Body() deleteManyDto: DeleteManyDto) {
     return this.choferService.removeMany(deleteManyDto.ids)

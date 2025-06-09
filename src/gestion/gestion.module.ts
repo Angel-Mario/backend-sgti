@@ -4,6 +4,7 @@ import { CombustibleAsignadoModule } from './combustible-asignado/combustible-as
 import { SolicitudRefuerzoModule } from './solicitud-refuerzo/solicitud-refuerzo.module'
 import { CombustibleChoferModule } from './combustible-chofer/combustible-chofer.module'
 import { OperacionesModule } from './operaciones/operaciones.module'
+import { ProtocoloModule } from './protocolo/protocolo.module'
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { OperacionesModule } from './operaciones/operaciones.module'
     SolicitudRefuerzoModule,
     CombustibleChoferModule,
     OperacionesModule,
+    ProtocoloModule,
   ],
   exports: [
     CombustibleAsignadoModule,
@@ -19,6 +21,7 @@ import { OperacionesModule } from './operaciones/operaciones.module'
     SolicitudRefuerzoModule,
     CombustibleChoferModule,
     OperacionesModule,
+    ProtocoloModule,
   ],
   controllers: [],
   providers: [],

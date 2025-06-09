@@ -140,5 +140,6 @@ export class RutaService {
         'No se pudieron eliminar todas las rutas seleccionadas',
       )
     }
+    return 'Ruta eliminada correctamente'
   }
 }

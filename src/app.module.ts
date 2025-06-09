@@ -5,10 +5,10 @@ import { AuthModule } from './auth/auth.module'
 import { CommonModule } from './common/common.module'
 import { GeoModule } from './geografico/geo.module'
 import { GestionModule } from './gestion/gestion.module'
-import { MbtilesModule } from './mbtiles/mbtiles.module'
 import { PersonalModule } from './personal/personal.module'
 import { SeedModule } from './seed/seed.module'
 import { TransportacionModule } from './transportacion/transportacion.module'
+// import { MbtilesModule } from './mbtiles/mbtiles.module'
 
 @Module({
   imports: [

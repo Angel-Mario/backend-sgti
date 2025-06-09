@@ -5,15 +5,12 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm'
-import { Protocolo } from './protocolo.entity'
+import { Protocolo } from '../../protocolo/entities/protocolo.entity'
 
 @Entity('operacion')
 export class Operacion {
   @PrimaryGeneratedColumn('uuid')
   id: string
-
-  @Column('text', { nullable: false })
-  nombre: string
 
   @Column('date', { nullable: false, unique: true })
   fecha: Date
@@ -21,7 +18,7 @@ export class Operacion {
   @ManyToOne(
     () => Protocolo,
     (protocolo) => protocolo.id,
-    { eager: true, onDelete: 'SET NULL' },
+    { eager: true, onDelete: 'CASCADE' },
   )
   @JoinColumn()
   protocolo: Protocolo

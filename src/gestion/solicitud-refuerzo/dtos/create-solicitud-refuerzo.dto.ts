@@ -1,7 +1,14 @@
-import { ArrayMinSize, ArrayNotEmpty, IsArray, IsString } from 'class-validator'
+import {
+  ArrayMinSize,
+  ArrayNotEmpty,
+  IsArray,
+  IsNotEmpty,
+  IsString,
+} from 'class-validator'
 
 export class CreateSolicitudRefuerzoDto {
   @IsString()
+  @IsNotEmpty()
   terminalNombre: string
 
   @IsArray()

@@ -1,4 +1,3 @@
-import { SolicitudRefuerzo } from '../../gestion/solicitud-refuerzo/entities/solicitud-refuerzo.entity'
 import { PuntoRefService } from 'src/geografico/punto-ref/punto-ref.service'
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -8,6 +7,7 @@ import handleDBErrors from 'src/common/handlers/handleDBErrors'
 import { CreateTerminalDto } from './dto/create-terminal.dto'
 import { UpdateTerminalDto } from './dto/update-terminal.dto'
 import { PaginationTerminalDto } from './dto/pagination-terminal.dto'
+import { SolicitudRefuerzo } from 'src/gestion/solicitud-refuerzo/entities/solicitud-refuerzo.entity'
 
 @Injectable()
 export class TerminalService {
@@ -135,5 +135,6 @@ export class TerminalService {
         'No se pudieron eliminar todas las terminales seleccionadas',
       )
     }
+    return 'Terminal eliminado correctamente'
   }
 }
